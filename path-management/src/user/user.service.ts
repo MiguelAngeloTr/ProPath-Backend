@@ -42,6 +42,7 @@ export class UserService {
 
   async create(userInfo: UserInfo): Promise<User> {
     const user = this.userRepository.create(userInfo);
+    console.log(user);
     return this.userRepository.save(user);
   }
 

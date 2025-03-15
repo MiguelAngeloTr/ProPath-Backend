@@ -98,6 +98,7 @@ export class PathManagementService {
   }
 
   async createUser(user: UserDto): Promise<UserDto> {
+    console.log(user);
     return firstValueFrom(
       this.client.send({ cmd: 'create_user' }, user)
     );

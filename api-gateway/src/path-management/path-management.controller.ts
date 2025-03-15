@@ -138,6 +138,7 @@ export class PathManagementController {
 
   @Post('users')
   async createUser(@Body() user: UserDto) {
+    console.log(user);
     try {
       return await this.pathManagementService.createUser(user);
     } catch (error) {

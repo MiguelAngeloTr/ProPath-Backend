@@ -5,9 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PathsModule } from './path/paths.module';
 import { ActivitiesModule } from './activity/activities.module';
+import { UserModule } from './user/user.module';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SimpleEntity } from './entities/simple.entity';
 
 @Module({
   imports: [
@@ -28,9 +28,9 @@ import { SimpleEntity } from './entities/simple.entity';
         synchronize: configService.get('DB_SYNC', false),
       }),
     }),
-    TypeOrmModule.forFeature([SimpleEntity]),
     PathsModule,
     ActivitiesModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
