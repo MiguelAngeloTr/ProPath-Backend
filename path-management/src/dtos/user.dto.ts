@@ -1,3 +1,5 @@
+import { PathDto } from './path.dto';
+
 export interface UserInfo {
     id: number;
     idType: string;
