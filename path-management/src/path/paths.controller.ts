@@ -28,6 +28,11 @@ export class PathsController {
     return this.pathsService.update(id, path);
   }
 
+  @MessagePattern({ cmd: 'send_path' })
+  async rejectPath(id: string) {
+    return this.pathsService.sendPath(id);
+  }
+
   @MessagePattern({ cmd: 'delete_path' })
   async deletePath(id: string) {
     return this.pathsService.remove(id);

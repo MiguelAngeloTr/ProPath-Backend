@@ -34,6 +34,12 @@ export class PathManagementService {
     );
   }
 
+  async sendPath(id: string): Promise<PathDto> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'send_path' }, id)
+    );
+  }
+
   async deletePath(id: string): Promise<boolean> {
     return firstValueFrom(
       this.client.send({ cmd: 'delete_path' }, id)

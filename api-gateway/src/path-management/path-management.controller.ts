@@ -43,6 +43,15 @@ export class PathManagementController {
     }
   }
 
+  @Put('paths/:id/send')
+  async sendPath(@Param('id') id: string) {
+    try {
+      return await this.pathManagementService.sendPath(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Delete('paths/:id')
   async deletePath(@Param('id') id: string) {
     try {

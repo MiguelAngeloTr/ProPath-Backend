@@ -47,6 +47,17 @@ export class PathsService {
     return this.findById(id);
   }
 
+  async updateStatus(id: string, state: string): Promise<Path> {
+    const path = await this.findById(id);
+    path.state = state;
+    await this.pathRepository.update(id, { state });
+    return path;
+  }
+
+  async sendPath(id: string): Promise<Path> {
+    return this.updateStatus(id, 'R');
+  }
+
   async remove(id: string): Promise<boolean> {
     const result = await this.pathRepository.delete(id);
     return result.affected ? result.affected > 0 : false;
