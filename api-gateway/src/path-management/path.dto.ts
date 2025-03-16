@@ -17,7 +17,7 @@ export interface PathDto {
     name: string;
     description: string;
     state: string;
-    totalHours: number;
-    totalBudget: number;
-    activities: ActivitieDto[];
+    activities?: ActivitieDto[];
+    userId: string;
+    coachId?: string;
 }

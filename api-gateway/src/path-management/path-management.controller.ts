@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpException, HttpStatus } from "@nestjs/common";
 import { PathManagementService } from "./path-management.service";
 import { PathDto, ActivitieDto } from "./path.dto";
-import { UserDto } from "./user.dto";
 
 @Controller('path-management')
 export class PathManagementController {
@@ -54,7 +53,7 @@ export class PathManagementController {
   }
 
   @Get('users/:userId/paths')
-  async getPathsByUserId(@Param('userId') userId: number) {
+  async getPathsByUserId(@Param('userId') userId: string) {
     try {
       return await this.pathManagementService.getPathsByUserId(userId);
     } catch (error) {
@@ -118,58 +117,58 @@ export class PathManagementController {
   }
 
   // User endpoints
-  @Get('users')
-  async getAllUsers() {
-    try {
-      return await this.pathManagementService.getAllUsers();
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  // @Get('users')
+  // async getAllUsers() {
+  //   try {
+  //     return await this.pathManagementService.getAllUsers();
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 
-  @Get('users/:id')
-  async getUserById(@Param('id') id: number) {
-    try {
-      return await this.pathManagementService.getUserById(id);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-    }
-  }
+  // @Get('users/:id')
+  // async getUserById(@Param('id') id: number) {
+  //   try {
+  //     return await this.pathManagementService.getUserById(id);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+  //   }
+  // }
 
-  @Post('users')
-  async createUser(@Body() user: UserDto) {
-    console.log(user);
-    try {
-      return await this.pathManagementService.createUser(user);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post('users')
+  // async createUser(@Body() user: UserDto) {
+  //   console.log(user);
+  //   try {
+  //     return await this.pathManagementService.createUser(user);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Put('users/:id')
-  async updateUser(@Param('id') id: number, @Body() user: UserDto) {
-    try {
-      return await this.pathManagementService.updateUser(id, user);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Put('users/:id')
+  // async updateUser(@Param('id') id: number, @Body() user: UserDto) {
+  //   try {
+  //     return await this.pathManagementService.updateUser(id, user);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Delete('users/:id')
-  async deleteUser(@Param('id') id: number) {
-    try {
-      return await this.pathManagementService.deleteUser(id);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  // @Delete('users/:id')
+  // async deleteUser(@Param('id') id: number) {
+  //   try {
+  //     return await this.pathManagementService.deleteUser(id);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 
-  @Get('users/:id/with-paths')
-  async getUserWithPaths(@Param('id') id: number) {
-    try {
-      return await this.pathManagementService.getUserWithPaths(id);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-    }
-  }
+  // @Get('users/:id/with-paths')
+  // async getUserWithPaths(@Param('id') id: number) {
+  //   try {
+  //     return await this.pathManagementService.getUserWithPaths(id);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+  //   }
+  // }
 }

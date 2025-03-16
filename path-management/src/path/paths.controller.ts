@@ -34,7 +34,7 @@ export class PathsController {
   }
 
   @MessagePattern({ cmd: 'get_user_paths' })
-  async getUserPaths(userId: number) {
+  async getUserPaths(userId: string) {
     return this.pathsService.findByUserId(userId);
   }
 }

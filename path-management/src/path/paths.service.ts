@@ -29,7 +29,7 @@ export class PathsService {
     return path;
   }
 
-  async findByUserId(userId: number): Promise<Path[]> {
+  async findByUserId(userId: string): Promise<Path[]> {
     return this.pathRepository.find({
       where: { userId },
       relations: ['activities'],
@@ -49,6 +49,6 @@ export class PathsService {
 
   async remove(id: string): Promise<boolean> {
     const result = await this.pathRepository.delete(id);
-    return result ? true : false;
+    return result.affected ? result.affected > 0 : false;
   }
 }

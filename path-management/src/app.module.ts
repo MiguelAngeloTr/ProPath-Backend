@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PathsModule } from './path/paths.module';
 import { ActivitiesModule } from './activity/activities.module';
-import { UserModule } from './user/user.module';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -25,12 +24,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         password: configService.get('DB_PASSWORD', 'propath123'),
         database: configService.get('DB_NAME', 'propath_db'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('DB_SYNC', false),
+        synchronize: configService.get('DB_SYNC', true),
       }),
     }),
     PathsModule,
     ActivitiesModule,
-    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

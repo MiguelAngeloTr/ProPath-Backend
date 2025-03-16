@@ -9,9 +9,9 @@ export interface UserInfo {
     country: string;
     city: string;
     birthDate: string;
-    profilePictureUrl: string;
+    profilePictureUrl?: string;
 }
 
 export interface UserWithPathsDto extends UserInfo {
-    paths: PathDto[];
+    paths?: PathDto[];
 }
