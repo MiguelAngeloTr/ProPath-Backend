@@ -40,6 +40,24 @@ export class PathManagementService {
     );
   }
 
+  async approvePath(id: string): Promise<PathDto> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'approve_path' }, id)
+    );
+  }
+
+  async activatePath(id: string): Promise<PathDto> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'activate_path' }, id)
+    );
+  }
+
+  async rejectPath(id: string): Promise<PathDto> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'reject_path' }, id)
+    );
+  }
+
   async deletePath(id: string): Promise<boolean> {
     return firstValueFrom(
       this.client.send({ cmd: 'delete_path' }, id)

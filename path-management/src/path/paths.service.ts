@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Path } from '../entities/path.entity';
@@ -30,10 +30,15 @@ export class PathsService {
   }
 
   async findByUserId(userId: string): Promise<Path[]> {
-    return this.pathRepository.find({
+    const path = await this.pathRepository.find({
       where: { userId },
       relations: ['activities'],
     });
+    const totalHours = await this.calculateTotalHours(path[0].id);
+    path[0]["totalHours"] = totalHours;
+    return {
+      ...path
+    };
   }
 
   async create(createPathDto: PathDto): Promise<Path> {
@@ -47,6 +52,26 @@ export class PathsService {
     return this.findById(id);
   }
 
+  async calculateTotalHours(id: string): Promise<number> {
+    const path = await this.findById(id);
+
+    if (!path.activities || path.activities.length === 0) {
+      return 0;
+    }
+
+    return path.activities.reduce((acc, activity) => acc + activity.hours, 0);
+  }
+
+  async calculateTotalBudget(id: string): Promise<number> {
+    const path = await this.findById(id);
+
+    if (!path.activities || path.activities.length === 0) {
+      return 0;
+    }
+
+    return path.activities.reduce((acc, activity) => acc + activity.budget, 0);
+  }
+
   async updateStatus(id: string, state: string): Promise<Path> {
     const path = await this.findById(id);
     path.state = state;
@@ -55,6 +80,26 @@ export class PathsService {
   }
 
   async sendPath(id: string): Promise<Path> {
+    const totalHours = await this.calculateTotalHours(id);
+    
+    if (totalHours !== 32) {
+      throw new BadRequestException(`El path no cumple las 32 horas requeridas. Actual: ${totalHours} horas.`);
+    }
+
+    return this.updateStatus(id, 'M');
+  }
+
+  async approvePath(id: string): Promise<Path> {
+
+    return this.updateStatus(id, 'A');
+  }
+
+  async activatePath(id: string): Promise<Path> {
+
+    return this.updateStatus(id, 'E');
+  }
+
+  async rejectPath(id: string): Promise<Path> {
     return this.updateStatus(id, 'R');
   }
 

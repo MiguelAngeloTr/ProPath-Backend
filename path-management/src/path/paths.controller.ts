@@ -29,8 +29,23 @@ export class PathsController {
   }
 
   @MessagePattern({ cmd: 'send_path' })
-  async rejectPath(id: string) {
+  async sendPath(id: string) {
     return this.pathsService.sendPath(id);
+  }
+
+  @MessagePattern({ cmd: 'approve_path' })
+  async approvePath(id: string) {
+    return this.pathsService.approvePath(id);
+  }
+
+  @MessagePattern({ cmd: 'activate_path' })
+  async activatePath(id: string) {
+    return this.pathsService.activatePath(id);
+  }
+
+  @MessagePattern({ cmd: 'reject_path' })
+  async rejectPath(id: string) {
+    return this.pathsService.rejectPath(id);
   }
 
   @MessagePattern({ cmd: 'delete_path' })

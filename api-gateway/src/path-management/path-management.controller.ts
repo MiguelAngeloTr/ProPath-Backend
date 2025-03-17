@@ -48,6 +48,34 @@ export class PathManagementController {
     try {
       return await this.pathManagementService.sendPath(id);
     } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put('paths/:id/approve')
+  async approvePath(@Param('id') id: string) {
+    try {
+      return await this.pathManagementService.approvePath(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put('paths/:id/activate')
+  async activatePath(@Param('id') id: string) {
+    try {
+      return await this.pathManagementService.activatePath(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put('paths/:id/reject')
+  async rejectPath(@Param('id') id: string) {
+    try {
+      return await this.pathManagementService.rejectPath(id);
+    } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
