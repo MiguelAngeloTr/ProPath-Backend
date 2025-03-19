@@ -1,4 +1,5 @@
 import { ActivityDto } from './activity.dto';
+import { CommentDto } from './comment.dto';
 
 export interface PathDto {
     id: string;
@@ -8,4 +9,5 @@ export interface PathDto {
     activities?: ActivityDto[];
     userId: string;
     coachId?: string;
+    comments?: CommentDto[];
 }

@@ -1,3 +1,5 @@
+import { CommentDto } from './comment.dto';
+
 export interface ActivityDto {
     id: string;
     name: string;
@@ -8,4 +10,5 @@ export interface ActivityDto {
     budget: number;
     state: string;
     pathId: string;
+    comments?: CommentDto[];
 }

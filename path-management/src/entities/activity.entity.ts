@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Path } from './path.entity';
+import { Comment } from './comment.entity';
 
 @Entity()
 export class Activity {
@@ -35,4 +36,9 @@ export class Activity {
 
   @Column()
   pathId: string;
+
+  @OneToMany(() => Comment, comment => comment.activity, {
+    cascade: true
+  })
+  comments: Comment[];
 }

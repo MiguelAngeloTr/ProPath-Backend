@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { Observable, firstValueFrom } from "rxjs";
 import { PathDto, ActivitieDto } from "./path.dto";
+import { CommentDto } from "./comment.dto";
 
 @Injectable()
 export class PathManagementService {
@@ -104,6 +105,14 @@ export class PathManagementService {
   async getActivitiesByPath(pathId: string): Promise<ActivitieDto[]> {
     return firstValueFrom(
       this.client.send({ cmd: 'get_activities_by_path' }, pathId)
+    );
+  }
+
+  // Comment operations
+ 
+  async createComment(comment: CommentDto): Promise<CommentDto> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'create_comment' }, comment)
     );
   }
 

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PathsModule } from './path/paths.module';
 import { ActivitiesModule } from './activity/activities.module';
+import { CommentsModule } from './comment/comments.module';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -29,6 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     PathsModule,
     ActivitiesModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

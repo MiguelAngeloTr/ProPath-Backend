@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpException, HttpStatus } from "@nestjs/common";
 import { PathManagementService } from "./path-management.service";
 import { PathDto, ActivitieDto } from "./path.dto";
+import { CommentDto } from "./comment.dto";
 
 @Controller('path-management')
 export class PathManagementController {
@@ -150,6 +151,17 @@ export class PathManagementController {
       return await this.pathManagementService.getActivitiesByPath(pathId);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  // Comment endpoints
+
+  @Post('comments')
+  async createComment(@Body() comment: CommentDto) {
+    try {
+      return await this.pathManagementService.createComment(comment);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 

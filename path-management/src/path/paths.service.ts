@@ -32,7 +32,7 @@ export class PathsService {
   async findByUserId(userId: string): Promise<Path[]> {
     const path = await this.pathRepository.find({
       where: { userId },
-      relations: ['activities'],
+      relations: ['activities', 'activities.comments','comments'],
     });
     const totalHours = await this.calculateTotalHours(path[0].id);
     path[0]["totalHours"] = totalHours;
