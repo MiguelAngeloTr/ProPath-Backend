@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { Observable, firstValueFrom } from "rxjs";
-import { PathDto, ActivitieDto } from "./path.dto";
-import { CommentDto } from "./comment.dto";
+import { PathDto, ActivitieDto } from "./dto/path.dto";
+import { CommentDto } from "./dto/comment.dto";
 
 @Injectable()
 export class PathManagementService {

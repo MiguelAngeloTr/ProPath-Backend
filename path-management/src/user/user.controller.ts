@@ -38,3 +38,5 @@
 //     return this.userService.findWithPaths(id);
 //   }
 // }
+
+//Ademas del usuario se deben agregar grupos que reunan varios usuarios y se les tiene que poner que rol ocupa en el grupo una persona pueden tener varios roles en varios grupos

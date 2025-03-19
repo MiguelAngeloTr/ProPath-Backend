@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpException, HttpStatus } from "@nestjs/common";
 import { PathManagementService } from "./path-management.service";
-import { PathDto, ActivitieDto } from "./path.dto";
-import { CommentDto } from "./comment.dto";
+import { PathDto, ActivitieDto } from "./dto/path.dto";
+import { CommentDto } from "./dto/comment.dto";
 
 @Controller('path-management')
 export class PathManagementController {

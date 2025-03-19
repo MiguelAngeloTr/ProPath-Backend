@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PathManagementService } from './path-management/path-management.service';
 import { PathManagementController } from './path-management/path-management.controller';
+import { envs } from './config';
 
 @Module({
   imports: [
@@ -11,8 +12,8 @@ import { PathManagementController } from './path-management/path-management.cont
         name: 'Path-Management-Service',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3001
+          host: envs.pathMicroserviceHost,
+          port: envs.pathMicroservicePort
         }
       }
     ])
