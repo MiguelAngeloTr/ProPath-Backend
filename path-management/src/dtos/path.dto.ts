@@ -1,13 +1,52 @@
+import { IsString, IsUUID, IsNotEmpty, IsEnum, IsOptional, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ActivityDto } from './activity.dto';
 import { CommentDto } from './comment.dto';
 
-export interface PathDto {
-    id: string;
+enum PathState {
+    INICIAL_RECHAZADO = 'R',
+    REVISION_MENTOR = 'M',
+    ACEPTADO_REVISION_ADMIN = 'A',
+    ACTIVO_EN_CURSO = 'E'
+}
+
+export class PathDto {
+    @IsOptional()
+    @IsUUID()
+    id?: string;
+
+    @IsString()
+    @IsNotEmpty()
     name: string;
+
+    @IsString()
+    @IsNotEmpty()
     description: string;
+
+    @IsEnum(PathState, {
+        message: 'El estado debe ser: R (Inicial/Rechazado), M (Revisión mentor), A (Aceptado/Revisión Admin) o E (Activo/En curso)'
+    })
     state: string;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => ActivityDto)
     activities?: ActivityDto[];
+
+    @IsString()
+    @IsNotEmpty()
     userId: string;
+
+    @IsOptional()
+    @IsString()
     coachId?: string;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => CommentDto)
     comments?: CommentDto[];
+
+    constructor(partial: Partial<PathDto>) {
+        Object.assign(this, partial);
+    }
 }
