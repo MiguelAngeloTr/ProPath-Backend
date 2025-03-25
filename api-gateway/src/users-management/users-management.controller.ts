@@ -88,6 +88,7 @@ export class UsersManagementController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+  
 
   @Delete('groups/:id')
   async deleteGroup(@Param('id') id: string) {
@@ -96,7 +97,23 @@ export class UsersManagementController {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
   }
+
+  @Post(':groupId/add-user/:userId')
+  async addUserToGroup(
+    @Param('groupId') groupId: string,
+    @Param('userId') userId: string,
+    @Body() body: UserDto,
+  ) {
+    return this.usersManagementService.addUserToGroup(groupId, userId, body.role);
+  }
+
+
+
+
+  
   
 
   

@@ -1,8 +1,8 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Param } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { GroupDto } from 'src/dto/group.dto';
-import { MessagePattern } from '@nestjs/microservices';
-import { Group } from 'src/entities/group.entity';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { UserRole } from 'src/dto/user.dto';
 
 
 @Controller('groups')
@@ -36,4 +36,9 @@ export class GroupsController {
    async deleteGroup(id: string) {
      return this.groupsService.removeGroup(id);
    }
+   @MessagePattern({ cmd: 'add_user' })
+async addUserToGroup(@Payload() data: { userId: string; groupId: string; role: UserRole }) {
+  return this.groupsService.addUserToGroup(data.userId, data.groupId, data.role );
+}
+
 }

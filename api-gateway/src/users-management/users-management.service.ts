@@ -73,6 +73,13 @@ export class UsersManagementService {
     );
   }
 
+  async addUserToGroup(userId: string, groupId: string, role: string): Promise<any> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'add_user' }, { userId, groupId, role }) // Se incluye 'role'
+    );
+  }
+  
+
 
 
 

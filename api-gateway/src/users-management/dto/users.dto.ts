@@ -1,3 +1,4 @@
+
 export interface UserDto {
     id: string;
     idType: string;
@@ -9,5 +10,4 @@ export interface UserDto {
     birthDate: string;
     profilePictureUrl?: string;
     
-   
 }

@@ -1,5 +1,7 @@
 import { IsString, IsEmail, IsOptional, IsDateString, Length, IsEnum } from 'class-validator';
 
+import { Transform } from 'class-transformer';
+
 export enum IdType {
   CC = 'CC', // Cédula de Ciudadanía
   CE = 'CE', // Cédula de Extranjería
@@ -27,6 +29,7 @@ export class UserDto {
   email: string;
 
   @IsEnum(UserRole, { message: 'role debe ser P o A' })
+  @Transform(({ value }) => value.toUpperCase()) // 👈 Transforma a mayúsculas antes de validar
   role: UserRole;
 
   @IsString()
