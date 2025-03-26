@@ -1,5 +1,6 @@
 import { IsString, IsUUID, IsNotEmpty, IsDate, ValidateIf, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { EitherActivityIdOrPathId } from './validators/comment.validator';
 
 export class CommentDto {
     @IsOptional()
@@ -23,11 +24,12 @@ export class CommentDto {
     @Type(() => Date)
     date?: Date;
 
-    @ValidateIf(o => !o.pathId)
+    @IsOptional()
     @IsUUID()
+    @EitherActivityIdOrPathId()
     activityId?: string;
 
-    @ValidateIf(o => !o.activityId)
+    @IsOptional()
     @IsUUID()
     pathId?: string;
 

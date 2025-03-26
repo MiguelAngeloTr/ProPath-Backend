@@ -1,6 +1,7 @@
-import { IsString, IsUUID, IsNotEmpty, IsDate, IsNumber, Min, Max, IsEnum, IsOptional, ValidateIf } from 'class-validator';
+import { IsString, IsUUID, IsNotEmpty, IsDate, IsNumber, Min, Max, IsEnum, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CommentDto } from './comment.dto';
+import { IsDateAfter } from './validators/activity.validator';
 
 enum ActivityState {
     EN_CURSO = 'E',
@@ -32,6 +33,9 @@ export class ActivityDto {
 
     @IsDate()
     @Type(() => Date)
+    @IsDateAfter('initialDate', { 
+        message: 'La fecha final debe ser igual o posterior a la fecha inicial' 
+    })
     finalDate: Date;
 
     @IsNumber()
