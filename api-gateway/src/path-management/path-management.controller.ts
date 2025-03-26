@@ -26,6 +26,15 @@ export class PathManagementController {
     }
   }
 
+  @Get('paths/:coachId/paths-in-review')
+  async getPathsByCoachInReview(@Param('coachId') coachId: string) {
+    try {
+      return await this.pathManagementService.getPathsByCoachInReview(coachId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
   @Post('paths')
   async createPath(@Body() path: PathDto) {
     try {

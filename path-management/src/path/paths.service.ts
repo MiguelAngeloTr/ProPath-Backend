@@ -40,6 +40,16 @@ export class PathsService {
       ...path
     };
   }
+  
+  async findByCoachIdAndStateM(coachId: string): Promise<Path[]> {
+    return this.pathRepository.find({
+      where: { 
+        coachId: coachId,
+        state: 'M' // Estado 'M' = Revisión mentor
+      },
+      relations: ['activities', 'comments'],
+    });
+  }
 
   async create(createPathDto: PathDto): Promise<Path> {
     const path = this.pathRepository.create(createPathDto);

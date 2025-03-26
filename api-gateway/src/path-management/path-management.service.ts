@@ -23,6 +23,12 @@ export class PathManagementService {
     );
   }
 
+  async getPathsByCoachInReview(coachId: string): Promise<PathDto[]> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'get_coach_paths_in_review' }, coachId)
+    );
+  }
+
   async createPath(path: PathDto): Promise<PathDto> {
     return firstValueFrom(
       this.client.send({ cmd: 'create_path' }, path)

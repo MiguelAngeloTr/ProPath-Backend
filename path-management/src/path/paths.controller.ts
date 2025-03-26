@@ -17,6 +17,11 @@ export class PathsController {
     return this.pathsService.findById(id);
   }
 
+  @MessagePattern({ cmd: 'get_coach_paths_in_review' })
+  async getCoachPathsInReview(coachId: string) {
+    return this.pathsService.findByCoachIdAndStateM(coachId);
+  }
+
   @MessagePattern({ cmd: 'create_path' })
   async createPath(createPathDto: PathDto) {
     return this.pathsService.create(createPathDto);
