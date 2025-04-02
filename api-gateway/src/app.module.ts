@@ -4,7 +4,9 @@ import { PathManagementService } from './path-management/path-management.service
 import { PathManagementController } from './path-management/path-management.controller';
 import { envs } from './config';
 import { UsersManagementController } from './users-management/users-management.controller';
-import { UsersManagementService } from './users-management/users-management.service'; // <-- IMPORTAR EL SERVICIO
+import { UsersManagementService } from './users-management/users-management.service';
+import { AuthController } from './auth/auth.controller';
+import { AuthService } from './auth/auth.service';
 
 @Module({
   imports: [
@@ -24,10 +26,18 @@ import { UsersManagementService } from './users-management/users-management.serv
           host: envs.UserMicroserviceHost,
           port: envs.UserMicroservicePort
         }
+      },
+      {
+        name: 'Auth-Service',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 3002
+        }
       }
     ]),
   ],
-  controllers: [PathManagementController, UsersManagementController], 
-  providers: [PathManagementService, UsersManagementService], 
+  controllers: [PathManagementController, UsersManagementController, AuthController], 
+  providers: [PathManagementService, UsersManagementService, AuthService], 
 })
 export class AppModule {}
