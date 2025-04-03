@@ -7,6 +7,7 @@ import { UsersManagementController } from './users-management/users-management.c
 import { UsersManagementService } from './users-management/users-management.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -38,6 +39,6 @@ import { AuthService } from './auth/auth.service';
     ]),
   ],
   controllers: [PathManagementController, UsersManagementController, AuthController], 
-  providers: [PathManagementService, UsersManagementService, AuthService], 
+  providers: [PathManagementService, UsersManagementService, AuthService, JwtService], 
 })
 export class AppModule {}

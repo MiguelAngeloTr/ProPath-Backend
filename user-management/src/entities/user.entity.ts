@@ -1,33 +1,33 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserGroup } from './user-group.entity';
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryColumn({ type: 'varchar', length: 50 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'char', length: 2 })
   idType: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar'})
   name: string;
 
-  @Column({ type: 'varchar', length: 30, unique: true })
+  @Column({ type: 'varchar'})
   email: string;
 
   @Column({ type: 'char', length: 1 })
   role: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar'})
   country: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar'})
   city: string;
 
   @Column({ type: 'date' })
   birthDate: Date;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   profilePictureUrl?: string;
 
   @OneToMany(() => UserGroup, (userGroup) => userGroup.user)

@@ -12,7 +12,6 @@ export class LoginDto {
 
 export class RegisterDto {
   @IsString()
-  @IsNotEmpty()
   id: string;
 
   @IsEmail()
@@ -26,6 +25,30 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   role: string;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  idType?: string;
+
+  @IsString()
+  @IsOptional()
+  country?: string;
+
+  @IsString()
+  @IsOptional()
+  city?: string;
+
+  @IsString()
+  @IsOptional()
+  birthDate?: string;
+
+  @IsString()
+  @IsOptional()
+  profilePictureUrl?: string;
 }
 
 export class RefreshTokenDto {

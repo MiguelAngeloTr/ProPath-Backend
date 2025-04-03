@@ -13,31 +13,27 @@ export enum UserRole {
 }
 
 export class UserDto {
+  @IsOptional()
   @IsString()
-  @Length(1, 50)
-  id: string;
+  id?: string;
 
   @IsEnum(IdType, { message: 'idType debe ser CC o CE' })
   idType: IdType;
 
   @IsString()
-  @Length(1, 50)
   name: string;
 
   @IsEmail()
-  @Length(1, 30)
   email: string;
 
   @IsEnum(UserRole, { message: 'role debe ser P o A' })
-  @Transform(({ value }) => value.toUpperCase()) // 👈 Transforma a mayúsculas antes de validar
+  @Transform(({ value }) => value.toUpperCase()) 
   role: UserRole;
 
   @IsString()
-  @Length(1, 50)
   country: string;
 
   @IsString()
-  @Length(1, 50)
   city: string;
 
   @IsDateString()
@@ -45,6 +41,5 @@ export class UserDto {
 
   @IsOptional()
   @IsString()
-  @Length(0, 200)
   profilePictureUrl?: string;
 }

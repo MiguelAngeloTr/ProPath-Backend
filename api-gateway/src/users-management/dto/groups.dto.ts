@@ -1,5 +1,3 @@
-
-
 import { UserDto } from './users.dto';
 
 export interface GroupDto {

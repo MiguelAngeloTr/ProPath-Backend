@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { envs } from './config';
 
@@ -15,7 +16,7 @@ async function bootstrap() {
       }
     }
   );
-
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true}));
   await app.listen();
   console.log('user management microservice is listening on', envs.PORT);
   

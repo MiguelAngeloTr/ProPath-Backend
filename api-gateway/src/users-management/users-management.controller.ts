@@ -1,12 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Put, UseGuards } from '@nestjs/common';
 import { UsersManagementService } from './users-management.service';
 import { UserDto } from './dto/users.dto';
 import { GroupDto } from './dto/groups.dto';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/decorators/roles.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('users-management')
 export class UsersManagementController {
   constructor(private readonly usersManagementService: UsersManagementService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Administrador)
   @Get('users')
   async getAllUsers() {
     try {

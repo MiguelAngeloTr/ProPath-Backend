@@ -1,40 +1,40 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthService } from '../auth.service';
+import { Observable } from 'rxjs';
+import { JwtService } from '@nestjs/jwt';
+import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private authService: AuthService
+    private readonly reflector: Reflector, 
+    private readonly jwtService: JwtService
   ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
     
-    // Si no se requieren roles específicos, permite el acceso
+    const requiredRoles = this.reflector.getAllAndOverride(ROLES_KEY, [
+      context.getHandler(), 
+      context.getClass()
+    ]);
+
     if (!requiredRoles) {
       return true;
     }
 
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return false;
+    const userRole = request.user.role;
+    console.log(request.user)
+    console.log(userRole)
+    console.log(requiredRoles)
+
+    // Verifica si el rol del usuario está incluido en los roles requeridos
+    if (!requiredRoles.includes(userRole)) {
+      throw new UnauthorizedException('No tienes permiso para acceder a este recurso');
     }
-    
-    const token = authHeader.split(' ')[1];
-    const response = await this.authService.verifyToken(token);
-    
-    if (!response.isValid) {
-      return false;
-    }
-    
-    // Añadir el usuario al request para usarlo en los controladores
-    request.user = response.user;
-    
-    // Verificar si el usuario tiene alguno de los roles requeridos
-    return requiredRoles.includes(response.user.role);
+
+    return true;
   }
 }
