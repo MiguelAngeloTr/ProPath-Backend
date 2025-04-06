@@ -23,7 +23,7 @@ export class UsersService {
   async findUserById(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where:{id},
-      relations: ['userGroups','userGroups.user']
+      relations: ['userGroups','userGroups.group']
     })
 
     if(!user){

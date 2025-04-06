@@ -14,13 +14,17 @@ export class RegisterDto {
   @IsString()
   id: string;
 
+  @IsString()
+  documentId: string;
+  
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
   @IsString()
   @MinLength(8)
-  password: string;
+  @IsOptional()
+  password?: string;
   
   @IsString()
   @IsNotEmpty()

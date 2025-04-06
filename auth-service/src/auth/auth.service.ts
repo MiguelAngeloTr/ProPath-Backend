@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { AuthRepository } from './auth.repository';
 import { RegisterDto, TokenPayload } from './dto/auth.dto';
 
@@ -20,18 +21,21 @@ export class AuthService {
       throw new BadRequestException('User with this email already exists');
     }
 
+    // Generar contraseña si no se proporciona una
+    const generatedPassword = !userData.password ? this.generateSecurePassword() : null;
+
+    console.log('Generated Password:', generatedPassword);
+    
+    // Crear el objeto de datos completo del usuario
+    const userToCreate = {
+      ...userData,
+      password: generatedPassword || userData.password,
+    };
+
+    console.log('User to create:', userToCreate);
+
     // Create new user
-    const newUser = await this.authRepository.create(userData);
-
-    // Generate tokens
-    const tokens = await this.generateTokens({
-      id: newUser.id,
-      email: newUser.email,
-      role: newUser.role,
-    });
-
-    // Update refresh token in database
-    await this.authRepository.updateRefreshToken(newUser.id, tokens.refreshToken);
+    const newUser = await this.authRepository.create(userToCreate);
 
     // Return user and tokens
     return {
@@ -40,7 +44,8 @@ export class AuthService {
         email: newUser.email,
         role: newUser.role,
       },
-      ...tokens,
+      ...(generatedPassword ? { generatedPassword } : {}),
+
     };
   }
 
@@ -76,6 +81,11 @@ export class AuthService {
       },
       ...tokens,
     };
+  }
+
+  private generateSecurePassword(length: number = 12): string {
+    // Generate a random password using crypto
+    return crypto.randomBytes(length).toString('hex').slice(0, length);
   }
 
   async verifyToken(token: string) {

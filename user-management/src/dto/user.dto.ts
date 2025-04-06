@@ -17,6 +17,9 @@ export class UserDto {
   @IsString()
   id?: string;
 
+  @IsString()
+  documentId: string;
+
   @IsEnum(IdType, { message: 'idType debe ser CC o CE' })
   idType: IdType;
 

@@ -6,6 +6,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  documentId: string;
+
   @Column({ type: 'char', length: 2 })
   idType: string;
 

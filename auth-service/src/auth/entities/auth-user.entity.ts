@@ -6,6 +6,9 @@ export class AuthUser {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  documentId: string;
+
   @Column({ type: 'varchar', length: 100 })
   email: string;
 

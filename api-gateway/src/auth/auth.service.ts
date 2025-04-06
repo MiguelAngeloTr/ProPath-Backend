@@ -22,9 +22,10 @@ export class AuthService {
 
       const userProfile = {
         id: registerDto.id,
+        documentId: registerDto.documentId,
         email: registerDto.email,
         role: registerDto.role,
- 
+
         name: registerDto.name || 'Usuario Nuevo',
         idType: registerDto.idType || 'CC',
         country: registerDto.country || 'Colombia',
