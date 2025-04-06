@@ -17,7 +17,7 @@ export class UsersService {
 
   //Encontrar todos los usuarios y sus grupos
   async findAll(): Promise<User[]> {
-    return this.userRepository.find({ relations: ['userGroups','userGroups.user'] });
+    return this.userRepository.find({ relations: ['userGroups','userGroups.group'] });
   }
 
   async findUserById(id: string): Promise<User> {

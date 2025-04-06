@@ -35,9 +35,8 @@ export class AuthService {
 
       const createdUser = await this.usersService.createUser(userProfile);
 
-
       const authResponse = await firstValueFrom(
-        this.authClient.send({ cmd: 'register' }, registerDto)
+        this.authClient.send({ cmd: 'register' }, createdUser)
       );
 
       return authResponse;

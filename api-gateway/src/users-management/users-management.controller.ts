@@ -6,7 +6,9 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/decorators/roles.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('users-management')
 @Controller('users-management')
 export class UsersManagementController {
   constructor(private readonly usersManagementService: UsersManagementService) {}
@@ -28,16 +30,6 @@ export class UsersManagementController {
       return await this.usersManagementService.getUserById(id);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-    }
-  }
-
-  @Post('users')
-  async createUser(@Body() user: UserDto) {
-    console.log(user);
-    try {
-      return await this.usersManagementService.createUser(user);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
