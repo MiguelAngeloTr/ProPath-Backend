@@ -34,6 +34,9 @@ export class PathsService {
       where: { userId },
       relations: ['activities', 'activities.comments','comments'],
     });
+    if (!path || path.length === 0) {
+      throw new NotFoundException(`No paths found for user with ID ${userId}`);
+    }
     const totalHours = await this.calculateTotalHours(path[0].id);
     path[0]["totalHours"] = totalHours;
     return {

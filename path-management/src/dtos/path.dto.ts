@@ -23,11 +23,6 @@ export class PathDto {
     @IsNotEmpty()
     description: string;
 
-    @IsEnum(PathState, {
-        message: 'El estado debe ser: R (Inicial/Rechazado), M (Revisión mentor), A (Aceptado/Revisión Admin) o E (Activo/En curso)'
-    })
-    state: string;
-
     @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => ActivityDto)

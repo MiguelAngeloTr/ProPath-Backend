@@ -73,6 +73,7 @@ export class PathManagementService {
 
   async getPathsByUserId(userId: string): Promise<PathDto[]> {
     return firstValueFrom(
+      
       this.client.send({ cmd: 'get_user_paths' }, userId)
     );
   }
@@ -121,42 +122,4 @@ export class PathManagementService {
       this.client.send({ cmd: 'create_comment' }, comment)
     );
   }
-
-  // User operations
-  // async getAllUsers(): Promise<UserDto[]> {
-  //   return firstValueFrom(
-  //     this.client.send({ cmd: 'get_all_users' }, {})
-  //   );
-  // }
-
-  // async getUserById(id: number): Promise<UserDto> {
-  //   return firstValueFrom(
-  //     this.client.send({ cmd: 'get_user_by_id' }, id)
-  //   );
-  // }
-
-  // async createUser(user: UserDto): Promise<UserDto> {
-  //   console.log(user);
-  //   return firstValueFrom(
-  //     this.client.send({ cmd: 'create_user' }, user)
-  //   );
-  // }
-
-  // async updateUser(id: number, user: UserDto): Promise<UserDto> {
-  //   return firstValueFrom(
-  //     this.client.send({ cmd: 'update_user' }, { id, user })
-  //   );
-  // }
-
-  // async deleteUser(id: number): Promise<boolean> {
-  //   return firstValueFrom(
-  //     this.client.send({ cmd: 'delete_user' }, id)
-  //   );
-  // }
-
-  // async getUserWithPaths(id: number): Promise<UserDto> {
-  //   return firstValueFrom(
-  //     this.client.send({ cmd: 'get_user_with_paths' }, id)
-  //   );
-  // }
 }

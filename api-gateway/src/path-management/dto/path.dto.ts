@@ -13,10 +13,9 @@ export interface ActivitieDto{
 }
 
 export interface PathDto {
-    id: string;
+    id?: string;
     name: string;
     description: string;
-    state: string;
     activities?: ActivitieDto[];
     userId: string;
     coachId?: string;

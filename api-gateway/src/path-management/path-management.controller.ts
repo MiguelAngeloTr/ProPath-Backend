@@ -1,11 +1,42 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpException, HttpStatus } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpException, HttpStatus, Request, UseGuards } from "@nestjs/common";
 import { PathManagementService } from "./path-management.service";
 import { PathDto, ActivitieDto } from "./dto/path.dto";
 import { CommentDto } from "./dto/comment.dto";
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/decorators/roles.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 
 @Controller('path-management')
+@UseGuards(JwtAuthGuard)
 export class PathManagementController {
   constructor(private readonly pathManagementService: PathManagementService) {}
+
+  
+  @Get('users/:userId/paths')
+  async getPathsByUserId(@Request() req) {
+    try {
+      console.log(req.user);
+      const userId = req.user.id;
+      console.log(userId);
+      return await this.pathManagementService.getPathsByUserId(userId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Post('paths')
+  async createPath(@Body() path: PathDto, @Request() req) {
+    try {
+      console.log(path);
+      const userId = req.user.id;
+      path = { ...path, userId };
+      return await this.pathManagementService.createPath(path);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   // Path endpoints
   @Get('paths')
@@ -35,14 +66,7 @@ export class PathManagementController {
     }
   }
 
-  @Post('paths')
-  async createPath(@Body() path: PathDto) {
-    try {
-      return await this.pathManagementService.createPath(path);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+
 
   @Put('paths/:id')
   async updatePath(@Param('id') id: string, @Body() path: PathDto) {
@@ -99,14 +123,7 @@ export class PathManagementController {
     }
   }
 
-  @Get('users/:userId/paths')
-  async getPathsByUserId(@Param('userId') userId: string) {
-    try {
-      return await this.pathManagementService.getPathsByUserId(userId);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-    }
-  }
+
 
   // Activity endpoints
   @Get('activities')
@@ -174,59 +191,4 @@ export class PathManagementController {
     }
   }
 
-  // User endpoints
-  // @Get('users')
-  // async getAllUsers() {
-  //   try {
-  //     return await this.pathManagementService.getAllUsers();
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-  //   }
-  // }
-
-  // @Get('users/:id')
-  // async getUserById(@Param('id') id: number) {
-  //   try {
-  //     return await this.pathManagementService.getUserById(id);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-  //   }
-  // }
-
-  // @Post('users')
-  // async createUser(@Body() user: UserDto) {
-  //   console.log(user);
-  //   try {
-  //     return await this.pathManagementService.createUser(user);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
-
-  // @Put('users/:id')
-  // async updateUser(@Param('id') id: number, @Body() user: UserDto) {
-  //   try {
-  //     return await this.pathManagementService.updateUser(id, user);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
-
-  // @Delete('users/:id')
-  // async deleteUser(@Param('id') id: number) {
-  //   try {
-  //     return await this.pathManagementService.deleteUser(id);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-  //   }
-  // }
-
-  // @Get('users/:id/with-paths')
-  // async getUserWithPaths(@Param('id') id: number) {
-  //   try {
-  //     return await this.pathManagementService.getUserWithPaths(id);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.NOT_FOUND);
-  //   }
-  // }
 }

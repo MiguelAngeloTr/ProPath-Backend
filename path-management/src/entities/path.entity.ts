@@ -13,7 +13,11 @@ export class Path {
   @Column()
   description: string;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: ['R', 'M', 'A', 'E'],
+    default: 'R' 
+  })
   state: string;
 
   @OneToMany(() => Activity, activity => activity.path, {
