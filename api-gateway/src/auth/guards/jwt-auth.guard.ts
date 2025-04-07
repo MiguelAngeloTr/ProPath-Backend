@@ -8,7 +8,7 @@ export class JwtAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    console.log(request.cookies);
+    console.log("Request: ",request.cookies);
     
     // Intentar obtener el token de la cookie primero
     let token = request.cookies?.access_token;

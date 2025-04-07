@@ -12,9 +12,12 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    return firstValueFrom(
-      this.authClient.send({ cmd: 'login' }, loginDto)
-    );
+    const loginResponse = await firstValueFrom(this.authClient.send({ cmd: 'login' }, loginDto));
+    const userData = await this.usersService.getUserById(loginResponse.user.id);
+
+    return {
+      loginResponse, userData
+    };
   }
 
   async register(registerDto: RegisterDto) {

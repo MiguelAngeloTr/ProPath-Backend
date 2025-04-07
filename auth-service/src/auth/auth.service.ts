@@ -62,6 +62,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    console.log('User found:', user);
     // Generate tokens
     const tokens = await this.generateTokens({
       id: user.id,
