@@ -32,16 +32,7 @@ export class UsersManagementController {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
-
-  @Put('users/:id')
-  async updateUser(@Param('id') id: string, @Body() user: UserDto) {
-    try {
-      return await this.usersManagementService.updateUser(id, user);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
+  
   @Delete('users/:id')
   async deleteUser(@Param('id') id: string) {
     try {

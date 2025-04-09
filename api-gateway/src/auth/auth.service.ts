@@ -12,12 +12,26 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const loginResponse = await firstValueFrom(this.authClient.send({ cmd: 'login' }, loginDto));
-    const userData = await this.usersService.getUserById(loginResponse.user.id);
 
-    return {
-      loginResponse, userData
-    };
+    try {
+      const loginResponse = await firstValueFrom(this.authClient.send({ cmd: 'login' }, loginDto));
+      const userData = await this.usersService.getUserById(loginResponse.user.id);
+      if (loginResponse.error) {
+        throw new UnauthorizedException(loginResponse.error);
+      }
+
+      if (!userData) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+  
+      return {
+        loginResponse, userData
+      };
+
+
+    } catch (error) {   
+      throw new UnauthorizedException('Invalid credentials');
+    }
   }
 
   async register(registerDto: RegisterDto) {

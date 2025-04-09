@@ -11,8 +11,9 @@ interface EnvVars {
     USER_MICROSERVICE_HOST: string;
     USER_MICROSERVICE_PORT: number;
     
-  
-    
+    //auth
+    AUTH_MICROSERVICE_HOST: string;
+    AUTH_MICROSERVICE_PORT: number;
 
 }
 
@@ -26,8 +27,10 @@ const envsSchema = joi.object({
     PATH_MICROSERVICE_PORT: joi.number().required(),
     //user
     USER_MICROSERVICE_HOST: joi.string().required(),
-    USER_MICROSERVICE_PORT: joi.number().required()
-
+    USER_MICROSERVICE_PORT: joi.number().required(),
+    //auth
+    AUTH_MICROSERVICE_HOST: joi.string().required(),
+    AUTH_MICROSERVICE_PORT: joi.number().required()
 
 })
 .unknown(true); // Ignora cualquier otra variable que no este en el schema
@@ -45,6 +48,9 @@ export const envs={
     pathMicroservicePort: envVars.PATH_MICROSERVICE_PORT,
     //user
     UserMicroserviceHost: envVars.USER_MICROSERVICE_HOST,
-    UserMicroservicePort: envVars.USER_MICROSERVICE_PORT
+    UserMicroservicePort: envVars.USER_MICROSERVICE_PORT,
+    //auth
+    AuthMicroserviceHost: envVars.AUTH_MICROSERVICE_HOST,
+    AuthMicroservicePort: envVars.AUTH_MICROSERVICE_PORT
 
 }

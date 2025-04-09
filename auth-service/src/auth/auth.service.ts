@@ -52,12 +52,14 @@ export class AuthService {
   async login(email: string, password: string) {
     // Find user by email
     const user = await this.authRepository.findByEmail(email);
+
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }

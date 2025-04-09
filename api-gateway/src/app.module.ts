@@ -32,8 +32,8 @@ import { JwtService } from '@nestjs/jwt';
         name: 'Auth-Service',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 3002
+          host: envs.AuthMicroserviceHost,
+          port: envs.AuthMicroservicePort
         }
       }
     ]),
