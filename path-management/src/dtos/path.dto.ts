@@ -45,3 +45,15 @@ export class PathDto {
         Object.assign(this, partial);
     }
 }
+
+export class UpdatePathDto {
+
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
+    @IsString()
+    @IsNotEmpty()
+    description: string;
+
+}

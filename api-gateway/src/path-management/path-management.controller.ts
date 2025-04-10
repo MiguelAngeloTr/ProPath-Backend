@@ -29,7 +29,7 @@ export class PathManagementController {
     status: 404,
     description: 'No se encontraron paths para el usuario especificado'
   })
-  @Get('users/:userId/paths')
+  @Get('user/paths')
   async getPathsByUserId(@Request() req) {
     try {
       console.log(req.user);
@@ -37,7 +37,7 @@ export class PathManagementController {
       console.log(userId);
       return await this.pathManagementService.getPathsByUserId(userId);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 

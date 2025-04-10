@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Path } from '../entities/path.entity';
-import { PathDto } from '../dtos/path.dto';
+import { UpdatePathDto,PathDto } from '../dtos/path.dto';
 
 
 @Injectable()
@@ -59,7 +59,7 @@ export class PathsService {
     return this.pathRepository.save(path);
   }
 
-  async update(id: string, updatePathDto: PathDto): Promise<Path> {
+  async update(id: string, updatePathDto: UpdatePathDto): Promise<Path> {
     await this.findById(id);
     await this.pathRepository.update(id, updatePathDto);
     return this.findById(id);

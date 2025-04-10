@@ -8,6 +8,8 @@ import { UsersManagementService } from './users-management/users-management.serv
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { AIController } from './genai/genai.controller';
+import { AIService } from './genai/genai.service';
 
 @Module({
   imports: [
@@ -35,10 +37,18 @@ import { JwtService } from '@nestjs/jwt';
           host: envs.AuthMicroserviceHost,
           port: envs.AuthMicroservicePort
         }
+      },
+      {
+        name: 'AI-Service',
+        transport: Transport.TCP,
+        options: {
+          host: envs.AIMicroserviceHost,
+          port: envs.AIMicroservicePort
+        }
       }
     ]),
   ],
-  controllers: [PathManagementController, UsersManagementController, AuthController], 
-  providers: [PathManagementService, UsersManagementService, AuthService, JwtService], 
+  controllers: [PathManagementController, UsersManagementController, AuthController, AIController], 
+  providers: [PathManagementService, UsersManagementService, AuthService, JwtService, AIService], 
 })
 export class AppModule {}

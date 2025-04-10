@@ -19,7 +19,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development', // true en producción
       sameSite: 'lax', // 'strict' en producción
-      maxAge: 15 * 60 * 1000 // 15 minutos en milisegundos
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias en milisegundos
     });
     
     // Configurar refresh token en cookie HTTP-only
@@ -65,7 +65,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
     
     response.cookie('refresh_token', tokens.refreshToken, {
