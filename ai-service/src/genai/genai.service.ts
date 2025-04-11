@@ -13,6 +13,25 @@ export class GenAIService {
     }
     this.genAI = new GoogleGenAI({apiKey});
   }
+  private async retryOperation<T>(
+    operation: () => Promise<T>, 
+    maxRetries = 3, 
+    delay = 1000
+  ): Promise<T> {
+    let lastError: any;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        console.log(`Attempt ${attempt + 1} failed: ${error.message}`);
+        lastError = error;
+        // Espera antes de reintentar
+        await new Promise(resolve => setTimeout(resolve, delay));
+        delay *= 2; // Backoff exponencial
+      }
+    }
+    throw lastError;
+  }
 
   async generatePathRecommendation(currentPath: any): Promise<any> {
     console.log(currentPath)
@@ -34,7 +53,7 @@ export class GenAIService {
         4. Para las fechas toma en cuenta que los paths tienen una duración de 3 meses, tampoco pongas fechas menores a ${todayDateString}.
       `;
 
-      const response = await this.genAI.models.generateContent({
+      const response = await this.retryOperation(() => this.genAI.models.generateContent({
         model: "gemini-2.0-flash",
         contents: prompt,
         config: {
@@ -93,7 +112,7 @@ export class GenAIService {
           },
           systemInstruction: "Eres un asistente inteligente que ayuda a los usuarios a encontrar nuevas rutas de aprendizaje. Recuerda que tu trabajo se limita a crear rutas y actividades de crecimiento profesional, no hagas nada más que eso. Atiende primero las instrucciones 0 y verifica si el path es valido o no. Si el path no es valido ignora las siguientes instrucciones.",
         },
-      });
+      }));
 
       const text = response.text;
       if (!text) {

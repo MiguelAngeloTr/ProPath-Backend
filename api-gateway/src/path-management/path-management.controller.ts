@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, HttpException, HttpStatus, Request, UseGuards } from "@nestjs/common";
 import { PathManagementService } from "./path-management.service";
-import { PathDto, ActivitieDto } from "./dto/path.dto";
+import { PathDto, ActivitieDto, UpdateActivityDto } from "./dto/path.dto";
 import { CommentDto } from "./dto/comment.dto";
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/decorators/roles.enum';
@@ -432,7 +432,7 @@ export class PathManagementController {
     status: 400,
     description: 'Datos de entrada inválidos'
   })
-  @Post('activities')
+  @Post('activity')
   async createActivity(@Body() activity: ActivitieDto) {
     try {
       return await this.pathManagementService.createActivity(activity);
@@ -474,8 +474,8 @@ export class PathManagementController {
     status: 400,
     description: 'Datos de entrada inválidos'
   })
-  @Put('activities/:id')
-  async updateActivity(@Param('id') id: string, @Body() activity: ActivitieDto) {
+  @Put('activity/:id')
+  async updateActivity(@Param('id') id: string, @Body() activity: UpdateActivityDto) {
     try {
       return await this.pathManagementService.updateActivity(id, activity);
     } catch (error) {
@@ -507,7 +507,7 @@ export class PathManagementController {
     status: 500,
     description: 'Error interno del servidor'
   })
-  @Delete('activities/:id')
+  @Delete('activity/:id')
   async deleteActivity(@Param('id') id: string) {
     try {
       return await this.pathManagementService.deleteActivity(id);

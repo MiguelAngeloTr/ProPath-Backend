@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthUser } from './entities/auth-user.entity';
 import { AuthRepository } from './auth.repository';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -20,6 +21,20 @@ import { AuthRepository } from './auth.repository';
         },
       }),
     }),
+    ClientsModule.registerAsync([
+      {
+        name: 'SMTP_SERVICE',
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get<string>('SMTP_SERVICE_HOST', 'localhost'),
+            port: configService.get<number>('SMTP_SERVICE_PORT', 3103),
+          },
+        }),
+      },
+    ]),
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthRepository],

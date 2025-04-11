@@ -4,6 +4,7 @@ import * as Joi from 'joi';
 // Definir la interfaz de variables de entorno
 interface EnvVars {
   PORT: number;
+  HOST: string;
   DB_HOST: string;
   DB_PORT: number;
   DB_USERNAME: string;
@@ -15,6 +16,7 @@ interface EnvVars {
 // Validación de variables de entorno con Joi
 const envsSchema = Joi.object({
   PORT: Joi.number().required(),
+  HOST: Joi.string().default('localhost'),
   DB_HOST: Joi.string().required(),
   DB_PORT: Joi.number().default(5432),
   DB_USERNAME: Joi.string().required(),
@@ -32,6 +34,7 @@ if (error) {
 // Convertir valores correctamente
 const envVars: EnvVars = {
   PORT: Number(value.PORT),
+  HOST: value.HOST,
   DB_HOST: value.DB_HOST,
   DB_PORT: Number(value.DB_PORT),
   DB_USERNAME: value.DB_USERNAME,

@@ -5,6 +5,7 @@ import * as joi from 'joi';
 interface EnvVars {
 
     PORT: number;
+    HOST: string;
     PATH_MICROSERVICE_HOST: string;
     PATH_MICROSERVICE_PORT: number;
     //user
@@ -19,6 +20,10 @@ interface EnvVars {
     AI_MICROSERVICE_HOST: string;
     AI_MICROSERVICE_PORT: number;
 
+    //smtp
+    SMTP_MICROSERVICE_HOST: string;
+    SMTP_MICROSERVICE_PORT: number;
+
 }
 
 
@@ -27,6 +32,7 @@ interface EnvVars {
 const envsSchema = joi.object({
     
     PORT: joi.number().required(),
+    HOST: joi.string().default('localhost'),
     PATH_MICROSERVICE_HOST: joi.string().required(),
     PATH_MICROSERVICE_PORT: joi.number().required(),
     //user
@@ -38,6 +44,9 @@ const envsSchema = joi.object({
     //ai
     AI_MICROSERVICE_HOST: joi.string().required(),
     AI_MICROSERVICE_PORT: joi.number().required(),
+    //smtp
+    SMTP_MICROSERVICE_HOST: joi.string().required(),
+    SMTP_MICROSERVICE_PORT: joi.number().required(),
 
 })
 .unknown(true); // Ignora cualquier otra variable que no este en el schema
@@ -51,6 +60,7 @@ const envVars: EnvVars = value;
 
 export const envs={
     PORT: envVars.PORT,
+    HOST: envVars.HOST,
     pathMicroserviceHost: envVars.PATH_MICROSERVICE_HOST,
     pathMicroservicePort: envVars.PATH_MICROSERVICE_PORT,
     //user
@@ -61,6 +71,9 @@ export const envs={
     AuthMicroservicePort: envVars.AUTH_MICROSERVICE_PORT,
     //ai
     AIMicroserviceHost: envVars.AI_MICROSERVICE_HOST,
-    AIMicroservicePort: envVars.AI_MICROSERVICE_PORT
+    AIMicroservicePort: envVars.AI_MICROSERVICE_PORT,
+    //smtp
+    SMTPMicroserviceHost: envVars.SMTP_MICROSERVICE_HOST,
+    SMTPMicroservicePort: envVars.SMTP_MICROSERVICE_PORT,
 
 }

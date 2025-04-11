@@ -3,12 +3,14 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { UsersManagementService } from '../users-management/users-management.service';
+import { SmtpService } from '../smtp/smtp.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject('Auth-Service') private readonly authClient: ClientProxy,
-    private readonly usersService: UsersManagementService
+    private readonly usersService: UsersManagementService,
+    private readonly smtpService: SmtpService
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -55,6 +57,18 @@ export class AuthService {
       const authResponse = await firstValueFrom(
         this.authClient.send({ cmd: 'register' }, createdUser)
       );
+
+      // Si hay una contraseña generada, enviar el correo
+      if (authResponse.generatedPassword) {
+        // Enviar correo con los datos y la contraseña
+        await this.smtpService.sendPasswordEmail({
+          email: createdUser.email,
+          name: createdUser.name,
+          password: authResponse.generatedPassword
+        });
+        
+        console.log(`Correo enviado a ${createdUser.email} con su contraseña generada`);
+      }
 
       return authResponse;
       

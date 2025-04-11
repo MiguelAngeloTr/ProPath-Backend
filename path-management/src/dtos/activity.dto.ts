@@ -42,11 +42,6 @@ export class ActivityDto {
     @Min(0)
     budget: number;
 
-    @IsEnum(ActivityState, { 
-        message: 'El estado debe ser: E (En curso), P (Pendiente) o C (Completado)' 
-    })
-    state: string;
-
     @IsUUID()
     pathId: string;
 
@@ -56,4 +51,34 @@ export class ActivityDto {
     constructor(partial: Partial<ActivityDto>) {
         Object.assign(this, partial);
     }
+}
+
+export class UpdateActivityDto {
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
+    @IsString()
+    @IsNotEmpty()
+    description: string;
+
+    @IsNumber()
+    @Min(0)
+    @Max(32, { message: 'Las horas de una actividad no pueden exceder 32' })
+    hours: number;
+
+    @IsDate()
+    @Type(() => Date)
+    initialDate: Date;
+
+    @IsDate()
+    @Type(() => Date)
+    @IsDateAfter('initialDate', { 
+        message: 'La fecha final debe ser igual o posterior a la fecha inicial' 
+    })
+    finalDate: Date;
+
+    @IsNumber()
+    @Min(0)
+    budget: number;
 }

@@ -4,6 +4,7 @@ import * as joi from 'joi';
 interface EnvVars {
     // Service Configuration
     PORT: number;
+    HOST: string;
     MICROSERVICE_PORT: number;
     
     // SMTP Configuration
@@ -22,6 +23,7 @@ interface EnvVars {
 const envsSchema = joi.object({
     // Service Configuration
     PORT: joi.number().default(3003),
+    HOST: joi.string().default('localhost'),
     MICROSERVICE_PORT: joi.number().default(3103),
     
     // SMTP Configuration
@@ -47,6 +49,7 @@ const envVars: EnvVars = value;
 export const envs = {
     // Service Configuration
     PORT: envVars.PORT,
+    HOST: envVars.HOST,
     MICROSERVICE_PORT: envVars.MICROSERVICE_PORT,
     
     // SMTP Configuration

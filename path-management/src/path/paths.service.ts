@@ -34,11 +34,6 @@ export class PathsService {
       where: { userId },
       relations: ['activities', 'activities.comments','comments'],
     });
-    if (!path || path.length === 0) {
-      throw new NotFoundException(`No paths found for user with ID ${userId}`);
-    }
-    const totalHours = await this.calculateTotalHours(path[0].id);
-    path[0]["totalHours"] = totalHours;
     return {
       ...path
     };
@@ -71,7 +66,6 @@ export class PathsService {
     if (!path.activities || path.activities.length === 0) {
       return 0;
     }
-
     return path.activities.reduce((acc, activity) => acc + activity.hours, 0);
   }
 

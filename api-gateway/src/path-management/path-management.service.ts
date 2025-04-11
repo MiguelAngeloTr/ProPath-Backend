@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { Observable, firstValueFrom } from "rxjs";
-import { PathDto, ActivitieDto } from "./dto/path.dto";
+import { PathDto, ActivitieDto, UpdateActivityDto } from "./dto/path.dto";
 import { CommentDto } from "./dto/comment.dto";
 
 @Injectable()
@@ -97,7 +97,7 @@ export class PathManagementService {
     );
   }
 
-  async updateActivity(id: string, activity: ActivitieDto): Promise<ActivitieDto> {
+  async updateActivity(id: string, activity: UpdateActivityDto): Promise<ActivitieDto> {
     return firstValueFrom(
       this.client.send({ cmd: 'update_activity' }, { id, activity })
     );

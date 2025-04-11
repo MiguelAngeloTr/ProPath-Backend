@@ -10,6 +10,7 @@ import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { AIController } from './genai/genai.controller';
 import { AIService } from './genai/genai.service';
+import { SmtpService } from './smtp/smtp.service';
 
 @Module({
   imports: [
@@ -45,10 +46,18 @@ import { AIService } from './genai/genai.service';
           host: envs.AIMicroserviceHost,
           port: envs.AIMicroservicePort
         }
+      },
+      {
+        name: 'SMTP-Service',
+        transport: Transport.TCP,
+        options: {
+          host: envs.SMTPMicroserviceHost,
+          port: envs.SMTPMicroservicePort
+        }
       }
     ]),
   ],
   controllers: [PathManagementController, UsersManagementController, AuthController, AIController], 
-  providers: [PathManagementService, UsersManagementService, AuthService, JwtService, AIService], 
+  providers: [PathManagementService, UsersManagementService, AuthService, JwtService, AIService, SmtpService], 
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { ActivitiesService } from './activities.service';
-import { ActivityDto } from '../dtos/activity.dto';
+import { UpdateActivityDto, ActivityDto } from '../dtos/activity.dto';
 
 @Controller()
 export class ActivitiesController {
@@ -23,7 +23,7 @@ export class ActivitiesController {
   }
 
   @MessagePattern({ cmd: 'update_activity' })
-  async updateActivity(data: { id: string; activity: ActivityDto }) {
+  async updateActivity(data: { id: string; activity: UpdateActivityDto }) {
     const { id, activity } = data;
     return this.activitiesService.update(id, activity);
   }

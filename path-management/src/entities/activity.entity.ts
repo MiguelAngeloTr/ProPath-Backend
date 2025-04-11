@@ -25,7 +25,11 @@ export class Activity {
   @Column({ type: 'float' })
   budget: number;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: ['E', 'P', 'C'],
+    default: 'E' 
+  })
   state: string;
 
   @ManyToOne(() => Path, path => path.activities, {

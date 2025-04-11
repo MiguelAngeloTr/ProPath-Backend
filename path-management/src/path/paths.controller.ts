@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { PathsService } from './paths.service';
-import { PathDto } from '../dtos/path.dto';
+import { UpdatePathDto, PathDto } from '../dtos/path.dto';
 
 @Controller()
 export class PathsController {
@@ -28,7 +28,7 @@ export class PathsController {
   }
 
   @MessagePattern({ cmd: 'update_path' })
-  async updatePath(data: { id: string; path: PathDto }) {
+  async updatePath(data: { id: string; path: UpdatePathDto }) {
     const { id, path } = data;
     return this.pathsService.update(id, path);
   }

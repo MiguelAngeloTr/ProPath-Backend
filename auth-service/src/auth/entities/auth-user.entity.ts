@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 
 @Entity({ name: 'auth_users' })
 export class AuthUser {

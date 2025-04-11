@@ -3,9 +3,10 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ActivitieDto{
     @ApiProperty({
         description: 'Identificador único de la actividad',
-        example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'
+        example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
+        required: false
     })
-    id: string;
+    id?: string;
 
     @ApiProperty({
         description: 'Nombre de la actividad',
@@ -47,17 +48,25 @@ export class ActivitieDto{
     budget: number;
 
     @ApiProperty({
-        description: 'Estado actual de la actividad: E (En curso), P (Pendiente) o C (Completado)',
-        example: 'P',
-        enum: ['E', 'P', 'C']
-    })
-    state: string;
-
-    @ApiProperty({
         description: 'Identificador del path al que pertenece esta actividad',
         example: 'b2c3d4e5-f6g7-h8i9-j0k1-l2m3n4o5p6q7'
     })
     pathId: string;
+}
+
+
+export class UpdateActivityDto {
+    name: string;
+
+    description: string;
+
+    hours: number;
+
+    initialDate: Date;
+
+    finalDate: Date;
+
+    budget: number;
 }
 
 export class PathDto {

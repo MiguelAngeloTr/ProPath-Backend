@@ -34,3 +34,6 @@ Thumbs.db
 
 # Optional eslint cache
 .eslintcache
+
+# Docker files
+docker-compose.yml
