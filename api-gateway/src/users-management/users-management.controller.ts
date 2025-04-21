@@ -51,7 +51,7 @@ export class UsersManagementController {
     }
   }
 
-  @Get('groups/:id')
+  @Get('group/:id')
   async getGroupById(@Param('id') id: string) {
     try {
       return await this.usersManagementService.getGroupById(id);

@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserGroup } from './user-group.entity';
 
 @Entity({ name: 'groups' })
 export class Group {
-  @PrimaryColumn({ type: 'varchar', length: 50 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'varchar', length: 50 })
