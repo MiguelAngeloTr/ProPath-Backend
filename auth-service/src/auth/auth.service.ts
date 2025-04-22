@@ -15,29 +15,12 @@ export class AuthService {
   ) {}
 
   async register(userData: RegisterDto) {
-    // Check if user already exists
-    const existingUser = await this.authRepository.findByEmail(userData.email);
-    if (existingUser) {
-      throw new BadRequestException('User with this email already exists');
-    }
-
-    // Generar contraseña si no se proporciona una
-    const generatedPassword = !userData.password ? this.generateSecurePassword() : null;
-
-    console.log('Generated Password:', generatedPassword);
-    
-    // Crear el objeto de datos completo del usuario
-    const userToCreate = {
-      ...userData,
-      password: generatedPassword || userData.password,
-    };
-
-    console.log('User to create:', userToCreate);
-
-    // Create new user
+    await this.userExistsOrException(userData.email);
+  
+    const { userToCreate, generatedPassword } = await this.generateUserToCreate(userData);
+  
     const newUser = await this.authRepository.create(userToCreate);
-
-    // Return user and tokens
+  
     return {
       user: {
         id: newUser.id,
@@ -45,8 +28,29 @@ export class AuthService {
         role: newUser.role,
       },
       ...(generatedPassword ? { generatedPassword } : {}),
-
     };
+  }
+  
+  async generateUserToCreate(userData: RegisterDto) {
+    const generatedPassword = !userData.password ? this.generateSecurePassword() : null;
+  
+    console.log('Generated Password:', generatedPassword);
+  
+    const userToCreate = {
+      ...userData,
+      password: generatedPassword || userData.password,
+    };
+  
+    console.log('User to create:', userToCreate);
+  
+    return { userToCreate, generatedPassword };
+  }
+  
+  async userExistsOrException(email: string) {
+    const existingUser = await this.authRepository.findByEmail(email);
+    if (existingUser) {
+      throw new BadRequestException('User with this email already exists');
+    }
   }
 
   async login(email: string, password: string) {
