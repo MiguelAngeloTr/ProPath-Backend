@@ -6,3 +6,9 @@ export interface GroupDto {
     description: string;
     users?: UserDto[];
 }
+
+export interface AddUser {
+    userId: string;
+    groupId: string;
+    role: string;
+}

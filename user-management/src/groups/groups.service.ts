@@ -62,17 +62,17 @@ export class GroupsService {
 
   // Agregar un usuario a un grupo con rol
   async addUserToGroup(userId: string, groupId: string, role: string) {
-    console.log('📌 Iniciando addUserToGroup con:', { userId, groupId, role });
+    console.log('Iniciando addUserToGroup con:', { userId, groupId, role });
   
     // Buscar el usuario
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    console.log('🔍 Usuario encontrado:', user);
+    console.log('Usuario encontrado:', user);
   
     if (!user) throw new Error('Usuario no encontrado');
   
     // Buscar el grupo
     const group = await this.groupRepository.findOne({ where: { id: groupId } });
-    console.log('🔍 Grupo encontrado:', group);
+    console.log('Grupo encontrado:', group);
   
     if (!group) throw new Error('Grupo no encontrado');
   
@@ -80,12 +80,14 @@ export class GroupsService {
     const existingUserGroup = await this.userGroupRepository.findOne({ 
       where: { user: { id: userId }, group: { id: groupId } }
     });
+
+    console.log('UsuarioGrupo existente:', existingUserGroup);
   
     if (existingUserGroup) {
-      console.log('⚠️ El usuario ya pertenece al grupo.');
+      console.log('El usuario ya pertenece al grupo.');
       throw new Error('El usuario ya está en el grupo');
     }
-  
+    
     // Si se intenta agregar un usuario con rol "M" (Mentor), verificar que no exista otro mentor
     if (role === "M") {
       const existingMentor = await this.userGroupRepository.findOne({
@@ -96,20 +98,71 @@ export class GroupsService {
       });
   
       if (existingMentor) {
-        console.log('⚠️ El grupo ya tiene un mentor asignado.');
+        console.log('El grupo ya tiene un mentor asignado.');
         throw new Error('El grupo ya tiene un mentor asignado. Solo puede haber un mentor por grupo.');
       }
     }
   
     // Agregar usuario al grupo con el rol
-    console.log('✅ Agregando usuario al grupo con rol:', role);
+    console.log('Agregando usuario al grupo con rol:', role);
     await this.userGroupRepository.save({ user, group, role });
   
-    console.log('🚀 Usuario agregado con éxito');
+    console.log('Usuario agregado con éxito');
     return { status: 'success', message: 'Usuario agregado al grupo' };
   }
 
+  //Eliminar usuario de un grupo
+  async removeUserFromGroup(userGroupId: string): Promise<UserGroup> {
+    console.log('Iniciando removeUserFromGroup con ID:', userGroupId);
+    const userGroup = await this.userGroupRepository.findOne({
+      where: { id: userGroupId },
+      relations: ['user', 'group']
+    });
+    console.log('UsuarioGrupo encontrado:', userGroup);
+    if (!userGroup) {
+      throw new NotFoundException(`UserGroup with ID ${userGroupId} not found`);
+    }
+
+    await this.userGroupRepository.delete(userGroupId);
+    return userGroup;
+  }
   
+   // Encontrar grupos a los que pertenece un usuario con un rol específico
+   async findUserGroupsByUserId(userId: string, role?: string): Promise<any[]> {
+    const query = this.userGroupRepository.createQueryBuilder('userGroup')
+      .innerJoinAndSelect('userGroup.group', 'group')
+      .where('userGroup.user.id = :userId', { userId });
+      
+    // Si se especifica un rol, filtrar por ese rol
+    if (role) {
+      query.andWhere('userGroup.role = :role', { role });
+    }
+    
+    const userGroups = await query.getMany();
+    
+    // Transformar los resultados para devolver la información necesaria
+    return userGroups.map(ug => ({
+      userId: userId,
+      groupId: ug.group.id,
+      groupName: ug.group.name,
+      role: ug.role
+    }));
+  }
+
+  // Encontrar el mentor de un grupo específico
+  async findGroupMentor(groupId: string): Promise<{ mentorId: string | null }> {
+    const mentor = await this.userGroupRepository.findOne({
+      where: { 
+        group: { id: groupId },
+        role: 'M'
+      },
+      relations: ['user']
+    });
+    
+    return { 
+      mentorId: mentor ? mentor.user.id : null
+    };
+  }
 
   
   

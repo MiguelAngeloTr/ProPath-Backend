@@ -1,20 +1,21 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Put, UseGuards } from '@nestjs/common';
 import { UsersManagementService } from './users-management.service';
 import { UserDto } from './dto/users.dto';
-import { GroupDto } from './dto/groups.dto';
+import { GroupDto, AddUser } from './dto/groups.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/decorators/roles.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
+
+@UseGuards(JwtAuthGuard)
 @ApiTags('users-management')
 @Controller('users-management')
 export class UsersManagementController {
   constructor(private readonly usersManagementService: UsersManagementService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Administrador)
+
   @Get('users')
   async getAllUsers() {
     try {
@@ -90,16 +91,19 @@ export class UsersManagementController {
 
   }
 
-  @Post(':groupId/add-user/:userId')
-  async addUserToGroup(
-    @Param('groupId') groupId: string,
-    @Param('userId') userId: string,
-    @Body() body: UserDto,
-  ) {
-    return this.usersManagementService.addUserToGroup(groupId, userId, body.role);
+  @Post('groups/add-user')
+  async addUserToGroup(@Body() userGroup: AddUser ) {
+    return this.usersManagementService.addUserToGroup(userGroup.userId, userGroup.groupId, userGroup.role);
   }
 
-
+  @Delete('groups/remove-user/:userGroupId')
+  async removeUserFromGroup(@Param('userGroupId') userGroupId: string) {
+    try {
+      return await this.usersManagementService.removeUserFromGroup(userGroupId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
 
   

@@ -41,6 +41,18 @@ export class UsersManagementService {
     );
   }
 
+  async getUserGroupsByUserId(userId: string, role?: string): Promise<any> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'get_user_groups_by_user_id' }, { userId, role })
+    );
+  }
+
+  async getGroupMentor(groupId: string): Promise<any> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'get_group_mentor' }, groupId)
+    );
+  }
+
   // Grupos
 
   async getAllGroups(): Promise<GroupDto[]> {
@@ -76,6 +88,12 @@ export class UsersManagementService {
   async addUserToGroup(userId: string, groupId: string, role: string): Promise<any> {
     return firstValueFrom(
       this.client.send({ cmd: 'add_user' }, { userId, groupId, role }) // Se incluye 'role'
+    );
+  }
+
+  async removeUserFromGroup(userGroupId: string): Promise<boolean> {
+    return firstValueFrom(
+      this.client.send({ cmd: 'remove_user' }, userGroupId)
     );
   }
   

@@ -114,4 +114,22 @@ export class PathsService {
     const result = await this.pathRepository.delete(id);
     return result.affected ? result.affected > 0 : false;
   }
+  async updatePathsCoach(userId: string, coachId: string): Promise<Path[]> {
+    // Buscar todos los paths del usuario
+    const paths = await this.pathRepository.find({
+      where: { userId }
+    });
+    
+    if (!paths || paths.length === 0) {
+      throw new NotFoundException(`No se encontraron paths para el usuario con ID ${userId}`);
+    }
+    
+    // Actualizar el coachId en todos los paths
+    for (const path of paths) {
+      path.coachId = coachId;
+    }
+    
+    // Guardar los cambios
+    return this.pathRepository.save(paths);
+  }
 }

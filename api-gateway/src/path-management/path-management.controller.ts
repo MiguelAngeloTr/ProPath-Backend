@@ -15,6 +15,12 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } 
 export class PathManagementController {
   constructor(private readonly pathManagementService: PathManagementService) {}
 
+  // ============================================================ //
+  // ==================== Endpoints de Paths ==================== //
+  // ============================================================ //
+
+  // -------------------- Obtener paths del usuario autenticado -------------------- //
+
   @ApiTags('path-management/paths')
   @ApiOperation({
     summary: 'Obtener paths del usuario autenticado',
@@ -41,8 +47,45 @@ export class PathManagementController {
     }
   }
 
+  // -------------------- Actualizar paths con el mentor del grupo (Borrable, la use para hacer pruebas) -------------------- //
+
   @ApiTags('path-management/paths')
   @ApiOperation({
+    summary: 'Actualizar mentor del path desde grupo',
+    description: 'Actualiza el coachId de los paths de un usuario con el ID del mentor de su grupo'
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'Identificador único del usuario',
+    example: '123456'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Paths actualizados exitosamente con el mentor del grupo',
+    type: [PathDto]
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error al actualizar los paths con el mentor del grupo'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado o no pertenece a ningún grupo con mentor'
+  })
+  @Put('paths/user/:userId/update-coach')
+  async updatePathsCoachFromGroup(@Param('userId') userId: string) {
+    try {
+      return await this.pathManagementService.updatePathsCoachFromGroup(userId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  // -------------------- Crear nuevo path de aprendizaje -------------------- //
+
+  @ApiTags('path-management/paths')
+  @ApiOperation({
+   
     summary: 'Crear nuevo path de aprendizaje',
     description: 'Crea un nuevo path de aprendizaje para el usuario autenticado.'
   })
@@ -79,6 +122,8 @@ export class PathManagementController {
     }
   }
 
+  // -------------------- Obtener todos los paths -------------------- //
+
   @ApiTags('path-management/paths')
   @ApiOperation({
     summary: 'Obtener todos los paths',
@@ -101,6 +146,9 @@ export class PathManagementController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+
+  // -------------------- Obtener un path por ID -------------------- //
 
   @ApiTags('path-management/paths')
   @ApiOperation({
@@ -130,10 +178,12 @@ export class PathManagementController {
     }
   }
 
+  // -------------------- Obtener paths en revisión por coach/mentor -------------------- //
+  
   @ApiTags('path-management/paths')
   @ApiOperation({
-    summary: 'Obtener path en revisión por coach',
-    description: 'Recupera todos los paths que están en estado de revisión (M) para un coach específico.'
+    summary: 'Obtener path en revisión por mentor',
+    description: 'Recupera todos los paths que están en estado de revisión (M) para un mentor específico.'
   })
   @ApiParam({
     name: 'coachId',
@@ -157,6 +207,8 @@ export class PathManagementController {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
   }
+
+  // -------------------- Actualizar path de aprendizaje -------------------- //
 
   @ApiTags('path-management/paths')
   @ApiOperation({
@@ -202,6 +254,8 @@ export class PathManagementController {
     }
   }
 
+  // -------------------- Enviar path a revisión  -------------------- //
+
   @ApiTags('path-management/paths')
   @ApiOperation({
     summary: 'Enviar path a revisión',
@@ -222,14 +276,17 @@ export class PathManagementController {
     description: 'La path no cumple con las 32 horas requeridas'
   })
   @Put('paths/:id/send')
-  async sendPath(@Param('id') id: string) {
+  async sendPath(@Param('id') id: string, @Request() req) {
     try {
+      await this.pathManagementService.updatePathsCoachFromGroup(req.userId);
       return await this.pathManagementService.sendPath(id);
     } catch (error) {
       console.log(error);
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  // -------------------- Aprobar path (Acción del Mentor) -------------------- //
 
   @ApiTags('path-management/paths')
   @ApiOperation({
@@ -259,6 +316,11 @@ export class PathManagementController {
     }
   }
 
+  // -------------------- Activar path (Acción del Admin) -------------------- //
+
+  @UseGuards(RolesGuard)
+  @ApiBearerAuth()
+  @Roles(Role.Administrador)
   @ApiTags('path-management/paths')
   @ApiOperation({
     summary: 'Activar path',
@@ -287,6 +349,8 @@ export class PathManagementController {
     }
   }
 
+  // -------------------- Rechazar path (Acción del Mentor y/o el Admin) -------------------- //
+
   @ApiTags('path-management/paths')
   @ApiOperation({
     summary: 'Rechazar path',
@@ -314,6 +378,8 @@ export class PathManagementController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  // -------------------- Eliminar path de aprendizaje -------------------- //
 
   @ApiTags('path-management/paths')
   @ApiOperation({
@@ -348,7 +414,12 @@ export class PathManagementController {
     }
   }
 
-  
+  // ================================================================== //  
+  // ==================== Endpoints de Actividades ==================== //
+  // ================================================================== //
+
+  // -------------------- Obtener actividades del usuario autenticado -------------------- //
+
   @ApiTags('path-management/activities')
   @ApiOperation({
     summary: 'Obtener todas las actividades',

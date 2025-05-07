@@ -36,9 +36,25 @@ export class GroupsController {
    async deleteGroup(id: string) {
      return this.groupsService.removeGroup(id);
    }
+
    @MessagePattern({ cmd: 'add_user' })
-async addUserToGroup(@Payload() data: { userId: string; groupId: string; role: UserRole }) {
-  return this.groupsService.addUserToGroup(data.userId, data.groupId, data.role );
-}
+   async addUserToGroup(@Payload() data: { userId: string; groupId: string; role: UserRole }) {
+    return this.groupsService.addUserToGroup(data.userId, data.groupId, data.role );
+   }
+
+   @MessagePattern({ cmd: 'remove_user' })
+   async removeUserFromGroup(userGroupId: string) {
+     return this.groupsService.removeUserFromGroup(userGroupId);
+   }
+
+    @MessagePattern({ cmd: 'get_user_groups_by_user_id' })
+    async getUserGroupsByUserId(@Payload() data: { userId: string, role?: string }) {
+      return this.groupsService.findUserGroupsByUserId(data.userId, data.role);
+    }
+  
+    @MessagePattern({ cmd: 'get_group_mentor' })
+    async getGroupMentor(groupId: string) {
+      return this.groupsService.findGroupMentor(groupId);
+    }
 
 }

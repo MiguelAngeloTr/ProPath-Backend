@@ -62,4 +62,10 @@ export class PathsController {
   async getUserPaths(userId: string) {
     return this.pathsService.findByUserId(userId);
   }
+
+  @MessagePattern({ cmd: 'update_paths_coach' })
+  async updatePathsCoach(data: { userId: string, coachId: string }) {
+    return this.pathsService.updatePathsCoach(data.userId, data.coachId);
+  }
+  
 }
