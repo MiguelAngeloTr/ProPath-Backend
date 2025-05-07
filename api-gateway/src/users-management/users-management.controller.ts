@@ -1,12 +1,11 @@
+
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, Put, UseGuards } from '@nestjs/common';
 import { UsersManagementService } from './users-management.service';
 import { UserDto } from './dto/users.dto';
 import { GroupDto, AddUser } from './dto/groups.dto';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/decorators/roles.enum';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { UserResponseDto } from './dto/user-response.dto';
 
 
 @UseGuards(JwtAuthGuard)
@@ -16,7 +15,78 @@ export class UsersManagementController {
   constructor(private readonly usersManagementService: UsersManagementService) {}
 
 
+
   @Get('users')
+  @ApiOperation({ summary: 'Obtener todos los usuarios', description: 'Devuelve la lista de todos los usuarios con sus grupos asociados.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuarios',
+    type: UserResponseDto,
+    isArray: true,
+    schema: {
+      example: [
+        {
+          id: '680532aa-6a71-432e-a2ba-5a98c40a9dc8',
+          documentId: '134122',
+          idType: 'CC',
+          name: 'simon',
+          email: 'simon.colonia@uao.edu.co',
+          role: 'A',
+          country: 'Colombia',
+          city: 'Cali',
+          birthDate: '2025-04-04',
+          profilePictureUrl: null,
+          userGroups: [
+            {
+              id: '92438071-2850-4685-9d60-9b422f73a727',
+              group: {
+                id: 'GRP001',
+                name: 'FrontEnd',
+                description: 'jajajajaja no es BackEnd'
+              },
+              role: 'P'
+            }
+          ]
+        },
+        {
+          id: 'd383dc7a-66a5-41a9-9bc2-4efa7c5c3a33',
+          documentId: '123412',
+          idType: 'CC',
+          name: 'Simonski',
+          email: 'simonski@uao.edu.co',
+          role: 'P',
+          country: 'Colombia',
+          city: 'Bogotá',
+          birthDate: '2025-02-06',
+          profilePictureUrl: null,
+          userGroups: [
+            {
+              id: '30e11278-fe8a-45b4-a858-c6228bade150',
+              group: {
+                id: 'GRP001',
+                name: 'FrontEnd',
+                description: 'jajajajaja no es BackEnd'
+              },
+              role: 'P'
+            }
+          ]
+        },
+        {
+          id: 'ed57cd6e-2ba2-453b-b8e6-963c988f4d8f',
+          documentId: '1234567890',
+          idType: 'CC',
+          name: 'cuelloo',
+          email: 'juancuellloo@awdad.com',
+          role: 'A',
+          country: 'Colombia',
+          city: 'Cali',
+          birthDate: '2004-02-28',
+          profilePictureUrl: null,
+          userGroups: []
+        }
+      ]
+    }
+  })
   async getAllUsers() {
     try {
       return await this.usersManagementService.getAllUsers();
@@ -25,7 +95,29 @@ export class UsersManagementController {
     }
   }
 
+
   @Get('users/:id')
+  @ApiOperation({ summary: 'Obtener usuario por ID', description: 'Devuelve la información de un usuario específico, incluyendo sus grupos.' })
+  @ApiParam({ name: 'id', description: 'ID del usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado', type: UserResponseDto, schema: { example: {
+    id: 'a1b2c3d4-5678-1234-9abc-def012345678',
+    idType: 'CC',
+    name: 'Juan Perez',
+    email: 'juan.perez@email.com',
+    role: 'P',
+    country: 'Colombia',
+    city: 'Bogotá',
+    birthDate: '1990-01-01',
+    profilePictureUrl: 'https://example.com/profile.jpg',
+    userGroups: [
+      {
+        id: 'b1e2c3d4-5678-1234-9abc-def012345678',
+        role: 'mentor',
+        groupId: 'a1b2c3d4-5678-1234-9abc-def012345678',
+      }
+    ]
+  } } })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async getUserById(@Param('id') id: string) {
     try {
       return await this.usersManagementService.getUserById(id);
@@ -34,7 +126,12 @@ export class UsersManagementController {
     }
   }
   
+
   @Delete('users/:id')
+  @ApiOperation({ summary: 'Eliminar usuario', description: 'Elimina un usuario por su ID.' })
+  @ApiParam({ name: 'id', description: 'ID del usuario a eliminar' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado', schema: { example: true } })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async deleteUser(@Param('id') id: string) {
     try {
       return await this.usersManagementService.deleteUser(id);
