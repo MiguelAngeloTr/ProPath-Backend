@@ -17,9 +17,15 @@ export class PathsController {
     return this.pathsService.findById(id);
   }
 
+  // In the path-management microservice controller
   @MessagePattern({ cmd: 'get_coach_paths_in_review' })
-  async getCoachPathsInReview(coachId: string) {
-    return this.pathsService.findByCoachIdAndStateM(coachId);
+  async getCoachPathsInReview(data: { coachId: string, memberIds: string[] }) {
+    return this.pathsService.findCoachPathsInReview(data.memberIds);
+  }
+
+  @MessagePattern({ cmd: 'get_admin_paths_in_review' })
+  async getAdminPathsInReview() {
+    return this.pathsService.findByStateA();
   }
 
   @MessagePattern({ cmd: 'create_path' })
@@ -63,9 +69,9 @@ export class PathsController {
     return this.pathsService.findByUserId(userId);
   }
 
-  @MessagePattern({ cmd: 'update_paths_coach' })
-  async updatePathsCoach(data: { userId: string, coachId: string }) {
-    return this.pathsService.updatePathsCoach(data.userId, data.coachId);
-  }
+  // @MessagePattern({ cmd: 'update_paths_coach' })
+  // async updatePathsCoach(data: { userId: string, coachId: string }) {
+  //   return this.pathsService.updatePathsCoach(data.userId, data.coachId);
+  // }
   
 }

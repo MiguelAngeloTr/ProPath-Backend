@@ -129,39 +129,37 @@ export class GroupsService {
   
    // Encontrar grupos a los que pertenece un usuario con un rol específico
    async findUserGroupsByUserId(userId: string, role?: string): Promise<any[]> {
-    const query = this.userGroupRepository.createQueryBuilder('userGroup')
-      .innerJoinAndSelect('userGroup.group', 'group')
-      .where('userGroup.user.id = :userId', { userId });
-      
-    // Si se especifica un rol, filtrar por ese rol
-    if (role) {
-      query.andWhere('userGroup.role = :role', { role });
-    }
+    console.log('Iniciando findUserGroupsByUserId con:', { userId, role });
+
+    // Verificar si el usuario existe
+    const user = await this.userRepository.findOne({ where: { id: userId } });
     
-    const userGroups = await query.getMany();
-    
-    // Transformar los resultados para devolver la información necesaria
-    return userGroups.map(ug => ({
-      userId: userId,
-      groupId: ug.group.id,
-      groupName: ug.group.name,
-      role: ug.role
-    }));
+    const userGroups = await this.userGroupRepository.find({
+      where: { user: { id: userId } },
+      relations: ['group','group.userGroups', 'group.userGroups.user'],
+    });
+
+    console.log('Grupos encontrados para el usuario:', userGroups);
+
+    return userGroups;
   }
 
   // Encontrar el mentor de un grupo específico
-  async findGroupMentor(groupId: string): Promise<{ mentorId: string | null }> {
+  async findGroupMentor(groupId: string): Promise<any> {
     const mentor = await this.userGroupRepository.findOne({
       where: { 
-        group: { id: groupId },
+        user: { id: groupId }, 
         role: 'M'
       },
       relations: ['user']
     });
+
+    if (!mentor) {
+      throw new NotFoundException(`Mentor for group with ID ${groupId} not found`);
+    }
+    console.log('Mentor encontrado:', mentor);
     
-    return { 
-      mentorId: mentor ? mentor.user.id : null
-    };
+    return mentor;
   }
 
   

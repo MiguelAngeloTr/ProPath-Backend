@@ -26,8 +26,47 @@ export class PathManagementService {
   }
 
   async getPathsByCoachInReview(coachId: string): Promise<PathDto[]> {
+    try {
+      const coachGroups = await this.usersClient.getUserGroupsByUserId(coachId, 'M');
+      
+      if (!coachGroups || coachGroups.length === 0) {
+        throw new Error('The coach is not a mentor in any group');
+      }
+      
+      // 2. Extract professional user IDs directly from the userGroups array
+      let groupMemberIds: string[] = [];
+      
+      for (const coachGroup of coachGroups) {
+        const userGroups = coachGroup.group.userGroups;
+        
+        if (userGroups && userGroups.length > 0) {
+          const professionalIds = userGroups
+            .filter(userGroup => userGroup.role === 'P')
+            .map(userGroup => userGroup.user.id);
+          
+          groupMemberIds = [...groupMemberIds, ...professionalIds];
+        }
+      }
+      
+      if (groupMemberIds.length === 0) {
+        throw new Error('No professional members found in the groups mentored by this coach');
+      }
+      console.log('Group member IDs:', groupMemberIds);
+      const pathsInReview = await firstValueFrom(
+        this.client.send({ cmd: 'get_coach_paths_in_review' }, {
+          memberIds: groupMemberIds
+        })
+      );
+      
+      return pathsInReview;
+    } catch (error) {
+      throw new Error(`Error fetching paths in review for coach: ${error.message}`);
+    }
+  }
+
+  async getPathsAdminReview(): Promise<PathDto[]> {
     return firstValueFrom(
-      this.client.send({ cmd: 'get_coach_paths_in_review' }, coachId)
+      this.client.send({ cmd: 'get_admin_paths_in_review' }, {})
     );
   }
 
@@ -71,42 +110,6 @@ export class PathManagementService {
     return firstValueFrom(
       this.client.send({ cmd: 'delete_path' }, id)
     );
-  }
-
-  async updatePathsCoachFromGroup(userId: string): Promise<PathDto[]> {
-    try {
-      // 1. Primero buscar grupos a los que pertenece el usuario con rol 'P'
-      const userGroups = await this.usersClient.getUserGroupsByUserId(userId, 'P');
-      console.log(userGroups[0])
-      if (!userGroups || userGroups.length === 0) {
-        throw new Error('El usuario no pertenece a ningún grupo con rol Profesional');
-      }
-      
-      // 2. Para cada grupo, buscar al mentor (usuario con rol 'M')
-      let mentorId = null;
-      for (const userGroup of userGroups) {
-        const groupWithMentor = await this.usersClient.getGroupMentor(userGroup.groupId);
-        console.log(groupWithMentor)
-        
-        if (groupWithMentor && groupWithMentor.mentorId) {
-          mentorId = groupWithMentor.mentorId;
-          break; // Usar el primer mentor que encontremos
-        }
-      }
-      
-      if (!mentorId) {
-        throw new Error('No se encontró mentor en ninguno de los grupos del usuario');
-      }
-      
-      // 3. Actualizar todos los paths del usuario con el mentorId
-      const updatedPaths = await firstValueFrom(
-        this.client.send({ cmd: 'update_paths_coach' }, { userId, mentorId })
-      );
-      
-      return updatedPaths;
-    } catch (error) {
-      throw new Error(`Error al actualizar el coach de los paths: ${error.message}`);
-    }
   }
 
   async getPathsByUserId(userId: string): Promise<PathDto[]> {

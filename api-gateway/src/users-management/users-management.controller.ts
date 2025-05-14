@@ -17,6 +17,7 @@ export class UsersManagementController {
 
 
   @Get('users')
+  @ApiTags('users-management/users')
   @ApiOperation({ summary: 'Obtener todos los usuarios', description: 'Devuelve la lista de todos los usuarios con sus grupos asociados.' })
   @ApiResponse({
     status: 200,
@@ -97,6 +98,7 @@ export class UsersManagementController {
 
 
   @Get('users/:id')
+  @ApiTags('users-management/users')
   @ApiOperation({ summary: 'Obtener usuario por ID', description: 'Devuelve la información de un usuario específico, incluyendo sus grupos.' })
   @ApiParam({ name: 'id', description: 'ID del usuario' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado', type: UserResponseDto, schema: { example: {
@@ -128,6 +130,7 @@ export class UsersManagementController {
   
 
   @Delete('users/:id')
+  @ApiTags('users-management/users')
   @ApiOperation({ summary: 'Eliminar usuario', description: 'Elimina un usuario por su ID.' })
   @ApiParam({ name: 'id', description: 'ID del usuario a eliminar' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado', schema: { example: true } })
@@ -141,6 +144,7 @@ export class UsersManagementController {
   }
 
   @Get('groups')
+  @ApiTags('users-management/groups')
   @ApiOperation({ summary: 'Obtener todos los grupos', description: 'Devuelve la lista de todos los grupos con sus usuarios asociados.' })
   @ApiResponse({
     status: 200,
@@ -189,6 +193,7 @@ export class UsersManagementController {
   }
 
   @Get('group/:id')
+  @ApiTags('users-management/groups')
   @ApiOperation({ summary: 'Obtener grupo por ID', description: 'Devuelve la información de un grupo específico, incluyendo sus usuarios.' })
   @ApiParam({ name: 'id', description: 'ID del grupo' })
   @ApiResponse({
@@ -229,6 +234,10 @@ export class UsersManagementController {
     }
   }
 
+  @ApiOperation({ summary: 'Crear un nuevo grupo', description: 'Crea un nuevo grupo con la información proporcionada.' })
+  @ApiResponse({ status: 201, description: 'Grupo creado'  })
+  @ApiResponse({ status: 400, description: 'Error al crear el grupo' })
+  @ApiTags('users-management/groups')
   @Post('groups')
   async createGroup(@Body() group: GroupDto) {
     try {
@@ -238,6 +247,11 @@ export class UsersManagementController {
     }
   }
 
+  @ApiOperation({ summary: 'Actualizar un grupo existente', description: 'Actualiza la información de un grupo existente.' })
+  @ApiResponse({ status: 200, description: 'Grupo actualizado'})
+  @ApiResponse({ status: 400, description: 'Error al actualizar el grupo' })
+  @ApiTags('users-management/groups')
+  @ApiParam({ name: 'id', description: 'ID del grupo a actualizar' })
   @Put('groups/:id')
   async updateGroup(@Param('id') id: string, @Body() group: GroupDto) {
     try {
@@ -247,7 +261,11 @@ export class UsersManagementController {
     }
   }
   
-
+  @ApiOperation({ summary: 'Eliminar un grupo', description: 'Elimina un grupo por su ID.' })
+  @ApiResponse({ status: 200, description: 'Grupo eliminado' })
+  @ApiResponse({ status: 404, description: 'Grupo no encontrado' })
+  @ApiTags('users-management/groups')
+  @ApiParam({ name: 'id', description: 'ID del grupo a eliminar' })
   @Delete('groups/:id')
   async deleteGroup(@Param('id') id: string) {
     try {
@@ -259,11 +277,20 @@ export class UsersManagementController {
 
   }
 
+  @ApiOperation({ summary: 'Agregar un usuario a un grupo', description: 'Agrega un usuario a un grupo con el rol especificado.' })
+  @ApiResponse({ status: 200, description: 'Usuario agregado al grupo' })
+  @ApiResponse({ status: 400, description: 'Error al agregar el usuario al grupo' })
+  @ApiTags('users-management/groups')
   @Post('groups/add-user')
   async addUserToGroup(@Body() userGroup: AddUser ) {
     return this.usersManagementService.addUserToGroup(userGroup.userId, userGroup.groupId, userGroup.role);
   }
 
+  @ApiOperation({ summary: 'Eliminar un usuario de un grupo', description: 'Elimina un usuario de un grupo por su ID.' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado del grupo' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiTags('users-management/groups')
+  @ApiParam({ name: 'userGroupId', description: 'ID del usuario en el grupo' })
   @Delete('groups/remove-user/:userGroupId')
   async removeUserFromGroup(@Param('userGroupId') userGroupId: string) {
     try {

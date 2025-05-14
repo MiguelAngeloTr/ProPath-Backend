@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Activity } from './activity.entity';
 import { Comment } from './comment.entity';
+import { Quartile } from './quartile.entity';
 
 @Entity()
 export class Path {
@@ -30,6 +31,10 @@ export class Path {
   })
   comments: Comment[];
 
+  @ManyToOne(()=> Quartile, quartile => quartile.paths, {nullable: true})
+  @JoinColumn()
+  
+  quartile: Quartile;
   @Column()
   userId: string;
 
