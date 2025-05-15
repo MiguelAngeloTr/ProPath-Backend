@@ -92,9 +92,75 @@ export class AuthService {
   }
 
   async verifyToken(token: string) {
-    return firstValueFrom(
-      this.authClient.send({ cmd: 'verify_token' }, token)
-    );
+    try {
+      return await firstValueFrom(
+        this.authClient.send({ cmd: 'verify_token' }, token)
+      );
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+  }
+
+  async requestPasswordReset(email: string) {
+    try {
+      // Verificar si el usuario existe
+      const user = await firstValueFrom(
+        this.authClient.send({ cmd: 'find_by_email' }, email)
+      );
+      
+      // Si no existe, simplemente retornamos (no informamos al cliente)
+      if (!user) {
+        console.log(`No se encontró usuario con email: ${email}`);
+        return;
+      }
+      
+      // Generar código de verificación (6 dígitos)
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Tiempo de expiración en minutos
+      const expiresInMinutes = 30;
+      
+      // Crear token en la base de datos
+      const resetToken = await firstValueFrom(
+        this.authClient.send({ cmd: 'create_reset_token' }, { 
+          email: email.toLowerCase(),
+          code,
+          expiresInMinutes
+        })
+      );
+      
+      // Si no se pudo generar el token, lanzar error
+      if (!resetToken) {
+        throw new Error('Error al generar el código de verificación');
+      }
+      
+      // Enviar el correo con el código desde la gateway
+      await this.smtpService.sendPasswordResetCode({
+        email: user.email,
+        name: user.name || user.email.split('@')[0], // Usamos la parte del email como nombre si no hay otro disponible
+        code,
+        expiresIn: expiresInMinutes
+      });
+      
+      console.log(`Código de verificación generado para ${email}: ${code}`);
+      return true;
+    } catch (error) {
+      console.error('Error en solicitud de restablecimiento:', error);
+      throw new BadRequestException('Error procesando solicitud de restablecimiento');
+    }
+  }
+  
+  async resetPassword(data: { email: string; code: string; newPassword: string }) {
+    try {
+      return firstValueFrom(
+        this.authClient.send(
+          { cmd: 'reset_password' }, 
+          data
+        )
+      );
+    } catch (error) {
+      throw new BadRequestException(`Error restableciendo contraseña: ${error.message}`);
+    }
   }
 
   async refreshToken(refreshToken: string) {
@@ -109,3 +175,4 @@ export class AuthService {
     );
   }
 }
+

@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Headers, UnauthorizedException, UseGuards, Request, Param, Res, Req, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, Post, Headers, UnauthorizedException, UseGuards, Request, Param, Res, Req, HttpStatus, HttpException } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto, RefreshTokenDto, RegisterDto } from './dto/auth.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { PasswordResetRequestDto, PasswordResetVerifyDto } from '../smtp/dto/password-reset.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -117,6 +118,79 @@ export class AuthController {
       response.clearCookie('refresh_token', { path: '/auth/refresh' });
       
       throw new UnauthorizedException('Logout failed: ' + error.message);
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Solicitar código de recuperación de contraseña',
+    description: 'Envía un código de verificación al correo electrónico del usuario para restablecer su contraseña'
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['email'],
+      properties: {
+        email: { type: 'string', example: 'usuario@ejemplo.com' }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Solicitud procesada correctamente'
+  })
+  @Post('request-password-reset')
+  async requestPasswordReset(@Body() data: PasswordResetRequestDto) {
+    try {
+      console.log('Solicitud de recuperación de contraseña:', data);
+      await this.authService.requestPasswordReset(data.email);
+      // Siempre devolver el mismo mensaje para evitar enumerar usuarios
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Si el correo existe en nuestro sistema, recibirá un código de verificación para restablecer su contraseña'
+      };
+    } catch (error) {
+      console.error('Error en solicitud de recuperación:', error);
+      // Siempre devolver el mismo mensaje para evitar enumerar usuarios
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Si el correo existe en nuestro sistema, recibirá un código de verificación para restablecer su contraseña'
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Restablecer contraseña con código de verificación',
+    description: 'Verifica el código de recuperación y establece una nueva contraseña para el usuario'
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['email', 'code', 'newPassword'],
+      properties: {
+        email: { type: 'string', example: 'usuario@ejemplo.com' },
+        code: { type: 'string', example: '123456' },
+        newPassword: { type: 'string', example: 'NuevaContraseña123!' }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Contraseña restablecida exitosamente'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Código inválido o expirado'
+  })
+  @Post('reset-password')
+  async resetPassword(@Body() data: PasswordResetVerifyDto) {
+    try {
+      const result = await this.authService.resetPassword(data);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Contraseña restablecida exitosamente'
+      };
+    } catch (error) {
+      throw new HttpException("El codigo ingresado no es correcto", HttpStatus.BAD_REQUEST);
     }
   }
 

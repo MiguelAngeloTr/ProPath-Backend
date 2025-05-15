@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcryptjs from 'bcryptjs';
@@ -11,7 +11,7 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async register(userData: RegisterDto) {
@@ -144,13 +144,22 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
-
   async logout(userId: string) {
     // Remove refresh token from database
     await this.authRepository.updateRefreshToken(userId, null);
     return { success: true };
   }
-
+  
+  async findByEmail(email: string) {
+    const user = await this.authRepository.findByEmail(email.toLowerCase());
+    if (!user) return null;
+    
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role
+    };
+  }
   private async generateTokens(payload: TokenPayload) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
@@ -167,5 +176,61 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+    // Métodos para el restablecimiento de contraseña
+  
+  async createPasswordResetToken(data: { email: string; code: string; expiresInMinutes: number }): Promise<{ token: string, expires: Date } | null> {
+    try {
+      // Verificar si el usuario existe
+      const user = await this.authRepository.findByEmail(data.email.toLowerCase());
+      if (!user) {
+        return null; // No informar al cliente si el email existe o no para evitar enumerar usuarios
+      }
+      
+      // Crear token en la base de datos
+      const token = await this.authRepository.createPasswordResetToken(
+        data.email.toLowerCase(), 
+        data.code, 
+        data.expiresInMinutes
+      );
+      
+      return {
+        token: data.code,
+        expires: token.expiresAt
+      };
+    } catch (error) {
+      console.error('Error creating password reset token:', error);
+      return null;
+    }
+  }
+  
+  async resetPassword(email: string, code: string, newPassword: string): Promise<boolean> {
+    try {
+      // Buscar token válido
+      const resetToken = await this.authRepository.findValidResetToken(
+        email.toLowerCase(), 
+        code
+      );
+      
+      if (!resetToken) {
+        throw new BadRequestException('Código inválido o expirado');
+      }
+      
+      // Buscar usuario
+      const user = await this.authRepository.findByEmail(email.toLowerCase());
+      if (!user) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      
+      // Actualizar contraseña
+      await this.authRepository.updatePassword(user.id, newPassword);
+      
+      // Marcar token como usado
+      await this.authRepository.markResetTokenAsUsed(resetToken.id);
+      
+      return true;
+    } catch (error) {
+      throw new BadRequestException(`Error al restablecer contraseña: ${error.message}`);
+    }
   }
 }
